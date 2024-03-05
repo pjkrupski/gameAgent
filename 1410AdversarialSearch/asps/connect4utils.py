@@ -72,8 +72,34 @@ def all_connect_four_slices(board):
             )
     return np.concatenate(connect_fours).astype(int)
 
+
+def all_connect_four_slices_x(board, x):
+    rows, cols = board.shape
+    connect_fours = []
+    # All horizontal four-in-a-rows
+    for c in range(cols - (x-1)):
+        connect_fours.append(board[:, c : c + x])
+    # All vertical four-in-a-rows
+    for r in range(rows - (x-1)):
+        connect_fours.append(board[r : r + x, :].T)
+    # All diagonal four-in-a-rows
+    for r in range(rows - (x-1)):
+        for c in range(cols - (x-1)):
+            # Add both diagonals for each 4x4 square in board
+            square = board[r : r + x, c : c + x]
+            connect_fours.append(
+                [
+                    square.diagonal(),
+                    np.fliplr(square).diagonal(),
+                ]
+            )
+    return np.concatenate(connect_fours).astype(int)
+
+
+
 def winning_move(board, piece):
+    #piece = 1 or 2
     return (all_connect_four_slices(board) == piece).all(axis=1).any()
 
 def winning_move_x(board, piece, x):
-    return (all_connect_four_slices(board, x) == piece).all(axis=1).any()
+    return (all_connect_four_slices_x(board, x) == piece).all(axis=1).any()

@@ -51,7 +51,7 @@ class Connect4Problem(AdversarialSearchProblem[Connect4State, Action]):
     DEFAULT_ROWS = 6
     DEFAULT_COLS = 7
 
-    def __init__(self, dims=(DEFAULT_ROWS, DEFAULT_COLS), board=None, player_to_move=0):
+    def __init__(self, dims=(DEFAULT_ROWS, DEFAULT_COLS), board=None, player_to_move=0, x=4):
         """
         Inputs:
                 dims - dimensions of the board, represented by a tuple: (<# of rows>, <# of columns>)
@@ -65,6 +65,7 @@ class Connect4Problem(AdversarialSearchProblem[Connect4State, Action]):
             board = c4utils.create_board(dims)
         self._rows, self._cols = board.shape
         self._start_state = Connect4State(board, player_to_move)
+        self.x = x
 
     def heuristic_func(self, state: Connect4State, player_index):
         player_index += 1
@@ -100,8 +101,10 @@ class Connect4Problem(AdversarialSearchProblem[Connect4State, Action]):
         return Connect4State(board, 1 - state.ptm)
 
     def is_terminal_state(self, state):
-        p1_wins = c4utils.winning_move(state.board, 1)
-        p2_wins = c4utils.winning_move(state.board, 2)
+        #p1_wins = c4utils.winning_move(state.board, 1)
+        #p2_wins = c4utils.winning_move(state.board, 2)
+        p1_wins = c4utils.winning_move_x(state.board, 1, self.x)
+        p2_wins = c4utils.winning_move_x(state.board, 2, self.x)
         assert not (p1_wins and p2_wins)
         return p1_wins or p2_wins or not self.get_available_actions(state)
 

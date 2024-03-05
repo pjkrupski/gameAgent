@@ -91,7 +91,9 @@ def main():
         "--player2", choices=["self", "minimax", "ab", "ab-cutoff"], default="minimax"
     )
     parser.add_argument("--cutoff", type=int, default=None)
+    parser.add_argument("--x", type=int, default=4)
     args = parser.parse_args()
+    print(args.x, " is x")
     player_args = [args.player1, args.player2]
 
     # Ensure cutoff is present, if required:
@@ -130,7 +132,7 @@ def main():
         if args.dimension is not None:
             if args.dimension < 4:
                 parser.error("--dimension must be at least 4 for Connect Four")
-            game = Connect4Problem(dims=(args.dimension, args.dimension))
+            game = Connect4Problem(dims=(args.dimension, args.dimension), x=int(args.x))
         else:
             game = Connect4Problem()
         game_ui = Connect4GUI(game)
