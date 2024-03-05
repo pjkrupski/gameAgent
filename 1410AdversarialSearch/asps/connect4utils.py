@@ -27,6 +27,29 @@ def print_board(board):
     print(np.flipud(board))
 
 
+def all_connect_slices(board, x):
+    #x is number needed to win
+    rows, cols = board.shape
+    connect_fours = []
+    # All horizontal x-in-a-rows
+    for c in range(cols - x):
+        connect_fours.append(board[:, c : c + x])
+    # All vertical x-in-a-rows
+    for r in range(rows - x):
+        connect_fours.append(board[r : r + x, :].T)
+    # All diagonal x-in-a-rows
+    for r in range(rows - x):
+        for c in range(cols - x):
+            # Add both diagonals for each rxc square in board
+            square = board[r : r + x, c : c + x]
+            connect_fours.append(
+                [
+                    square.diagonal(),
+                    np.fliplr(square).diagonal(),
+                ]
+            )
+    return np.concatenate(connect_fours).astype(int)
+
 def all_connect_four_slices(board):
     rows, cols = board.shape
     connect_fours = []
@@ -49,6 +72,8 @@ def all_connect_four_slices(board):
             )
     return np.concatenate(connect_fours).astype(int)
 
-
 def winning_move(board, piece):
     return (all_connect_four_slices(board) == piece).all(axis=1).any()
+
+def winning_move_x(board, piece, x):
+    return (all_connect_four_slices(board, x) == piece).all(axis=1).any()
