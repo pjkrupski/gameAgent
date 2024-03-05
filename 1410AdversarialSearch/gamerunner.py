@@ -130,7 +130,7 @@ def main():
     ### Game: Connect Four
     if args.game == "connect4":
         if args.dimension is not None:
-            if args.dimension < 4:
+            if args.dimension < args.x:
                 parser.error("--dimension must be at least 4 for Connect Four")
             game = Connect4Problem(dims=(args.dimension, args.dimension), x=int(args.x))
         else:
