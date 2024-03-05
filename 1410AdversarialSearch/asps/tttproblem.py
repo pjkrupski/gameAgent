@@ -137,6 +137,23 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
             return [0.5, 0.5]
         else:
             return "non-terminal"
+        
+    #TODO
+    def _internal_evaluate_terminal_t(self, state):
+        pass
+        
+    #TODO
+    def _internal_evaluate_terminal_l(self, state):
+        pass
+        
+    #TODO
+    def _internal_evaluate_terminal_v(self, state):
+        pass
+    
+    #TODO
+    def _internal_evaluate_terminal_cross(self, state):
+        pass
+
 
     @staticmethod
     def _all_same(cell_list):

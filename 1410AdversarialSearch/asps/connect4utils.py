@@ -11,10 +11,8 @@ def drop_piece(board, row, col, piece):
     board[row][col] = piece
     return board
 
-
 def is_valid_location(board, col):
     return board[-1][col] == 0
-
 
 def get_next_open_row(board, col):
     rows = board.shape[0]

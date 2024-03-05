@@ -81,6 +81,8 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
 
 def main():
     # Setup parser; Default behavior is Tic-Tac-Toe, minimax, player vs. bot.
+    #TODO
+    #Add command line arg for passing win pattern
     parser = argparse.ArgumentParser()
     parser.add_argument("--game", choices=["ttt", "connect4", "custom"], default="ttt")
     parser.add_argument("--dimension", type=int, default=None)
@@ -122,6 +124,8 @@ def main():
         if args.dimension is not None:
             if args.dimension < 3:
                 parser.error("--dimension must be at least 3 for Tic-Tac-Toe")
+            #TODO
+            #Pass custom arg in game instantiation 
             game = TTTProblem(dim=args.dimension)
         else:
             game = TTTProblem()
