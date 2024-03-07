@@ -223,11 +223,14 @@ class TTTUI(GameUI):
         user_action = None
         available_actions = self._asp.get_available_actions(self._state)
 
-        while not user_action in available_actions:
-            row = int(input("Enter row index: "))
-            col = int(input("Enter column index: "))
+        #while not user_action in available_actions:
+        #    row = int(input("Enter row index: "))
+        #    col = int(input("Enter column index: "))
+        #    user_action = (row, col)
+        while user_action not in available_actions:
+            user_input = input("Enter row and column indices separated by a space eg, 3 3:\n")
+            row, col = map(int, user_input.split())  # Split input string and convert to integers
             user_action = (row, col)
-
         return user_action
 
 
