@@ -138,12 +138,49 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         else:
             return "non-terminal"
         
-    #TODO
-    def _internal_evaluate_terminal_t(self, state):
-        pass
+    def _internal_evaluate_terminal_l(self, state):
+        """
+        If state is terminal, returns its evaluation;
+        otherwise, returns 'non-terminal'.
+        """
+        board = state.board
+        dim = len(board)
+
+        # Check for L shape in all orientations
+        for r in range(dim):
+            for c in range(dim):
+                if board[r][c] == '':  # Skip empty cells
+                    continue
+
+                # Check horizontal L shape
+                if c + 2 < dim and r + 1 < dim:
+                    if board[r][c] == board[r][c + 1] == board[r][c + 2] == board[r + 1][c]:
+                        return [1.0] if board[r][c] == 'X' else [0.0]
+
+                # Check vertical L shape
+                if r + 2 < dim and c - 1 >= 0:
+                    if board[r][c] == board[r + 1][c] == board[r + 2][c] == board[r + 2][c - 1]:
+                        return [1.0] if board[r][c] == 'X' else [0.0]
+
+                # Check diagonal (down-right) L shape
+                if r + 2 < dim and c + 1 < dim:
+                    if board[r][c] == board[r + 1][c] == board[r + 2][c] == board[r + 2][c + 1]:
+                        return [1.0] if board[r][c] == 'X' else [0.0]
+
+                # Check diagonal (down-left) L shape
+                if r + 2 < dim and c - 1 >= 0:
+                    if board[r][c] == board[r + 1][c] == board[r + 2][c] == board[r + 2][c - 1]:
+                        return [1.0] if board[r][c] == 'X' else [0.0]
+
+        # Check if all spaces are filled up
+        if self.get_available_actions(state) == set():
+            return [0.5, 0.5]  # Tie game
+        else:
+            return "non-terminal"
+
         
     #TODO
-    def _internal_evaluate_terminal_l(self, state):
+    def _internal_evaluate_terminal_t(self, state):
         pass
         
     #TODO
