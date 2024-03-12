@@ -51,7 +51,7 @@ Action = Tuple[int, int]
 
 
 class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
-    def __init__(self, dim=3, board=None, player_to_move=0):
+    def __init__(self, pattern, dim=3, board=None, player_to_move=0):
         """
         Inputs:
                 dim- the number of cells in one row or column.
@@ -65,6 +65,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         if board == None:
             board = [[SPACE for _ in range(dim)] for _ in range(dim)]
         self._start_state = TTTState(board, player_to_move)
+        self.pattern = pattern
 
     def heuristic_func(self, state: TTTState, player_index: int) -> float:
         """
@@ -93,10 +94,17 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         return TTTState(board, 1 - state.ptm)
 
     def is_terminal_state(self, state):
-        return not (self._internal_evaluate_terminal(state) == "non-terminal")
+        if self.pattern == 'l':
+            return not (self._internal_evaluate_terminal_l(state) == "non-terminal")
+        else:
+            return not (self._internal_evaluate_terminal(state) == "non-terminal")
+            
 
     def evaluate_terminal(self, state):
-        internal_val = self._internal_evaluate_terminal(state)
+        if self.pattern == 'l':
+            internal_val = self._internal_evaluate_terminal_l(state)
+        else:
+            internal_val = self._internal_evaluate_terminal(state)
         if internal_val == "non-terminal":
             raise ValueError("attempting to evaluate a non-terminal state")
         else:
@@ -138,45 +146,64 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         else:
             return "non-terminal"
         
+    def search_L(self, c, board, row, col):
+        #Searches for a len 5 L pattern of c's 
+        rows = self._dim
+        cols = self._dim
+        if (row - 2 <= 0 and col + 2 < cols and
+            board[row-1][col] == c and
+            board[row-2][col] == c and
+            board[row][col+1] == c and
+            board[row][col+2] == c):
+            return True
+        if (row + 2 < rows and col + 2 < cols and
+            board[row + 1][col] == c and
+            board[row + 2][col] == c and
+            board[row][col+1] == c and
+            board[row][col+2] == c):
+            return True
+        if (row - 2 <= 0 and col - 2 >= 0 and
+            board[row-1][col] == c and
+            board[row-2][col] == c and
+            board[row][col-1] == c and
+            board[row][col-2] == c):
+            return True
+        if (row + 2 < rows and col + 2 < cols and
+            board[row + 1][col] == c and
+            board[row + 2][col] == c and
+            board[row][col-1] == c and
+            board[row][col-2] == c):
+            return True
+        return False
+        
+        
     def _internal_evaluate_terminal_l(self, state):
         """
         If state is terminal, returns its evaluation;
         otherwise, returns 'non-terminal'.
         """
         board = state.board
-        dim = len(board)
-
-        # Check for L shape in all orientations
-        for r in range(dim):
-            for c in range(dim):
-                if board[r][c] == '':  # Skip empty cells
-                    continue
-
-                # Check horizontal L shape
-                if c + 2 < dim and r + 1 < dim:
-                    if board[r][c] == board[r][c + 1] == board[r][c + 2] == board[r + 1][c]:
-                        return [1.0] if board[r][c] == 'X' else [0.0]
-
-                # Check vertical L shape
-                if r + 2 < dim and c - 1 >= 0:
-                    if board[r][c] == board[r + 1][c] == board[r + 2][c] == board[r + 2][c - 1]:
-                        return [1.0] if board[r][c] == 'X' else [0.0]
-
-                # Check diagonal (down-right) L shape
-                if r + 2 < dim and c + 1 < dim:
-                    if board[r][c] == board[r + 1][c] == board[r + 2][c] == board[r + 2][c + 1]:
-                        return [1.0] if board[r][c] == 'X' else [0.0]
-
-                # Check diagonal (down-left) L shape
-                if r + 2 < dim and c - 1 >= 0:
-                    if board[r][c] == board[r + 1][c] == board[r + 2][c] == board[r + 2][c - 1]:
-                        return [1.0] if board[r][c] == 'X' else [0.0]
-
-        # Check if all spaces are filled up
+        rows = self._dim
+        cols = self._dim
+        
+        for row in range(rows):
+            for col in range(cols):
+                if board[row][col] == X:
+                    if self.search_L(X, board, row, col):
+                        return [1.0, 0.0]
+                elif board[row][col] == O:
+                    if self.search_L(O, board, row, col):
+                        return [0.0, 1.0]
+                    
+                    
         if self.get_available_actions(state) == set():
-            return [0.5, 0.5]  # Tie game
+            # all spaces are filled up
+            return [0.5, 0.5]
         else:
             return "non-terminal"
+
+
+        
 
         
     #TODO

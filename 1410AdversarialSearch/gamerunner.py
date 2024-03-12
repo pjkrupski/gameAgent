@@ -94,6 +94,7 @@ def main():
     )
     parser.add_argument("--cutoff", type=int, default=None)
     parser.add_argument("--x", type=int, default=4)
+    parser.add_argument("--pattern", choices=["l", "line"], default="line")
     args = parser.parse_args()
     print(args.x, " is x")
     player_args = [args.player1, args.player2]
@@ -126,7 +127,7 @@ def main():
                 parser.error("--dimension must be at least 3 for Tic-Tac-Toe")
             #TODO
             #Pass custom arg in game instantiation 
-            game = TTTProblem(dim=args.dimension)
+            game = TTTProblem(args.pattern, dim=args.dimension)
         else:
             game = TTTProblem()
         game_ui = TTTUI(game)
