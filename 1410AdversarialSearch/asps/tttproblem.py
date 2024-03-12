@@ -17,7 +17,10 @@
 
 from typing import Tuple
 from adversarialsearchproblem import AdversarialSearchProblem, GameState, GameUI
+#import searchWinPatterns.search_L
+from searches import search_L, search_V, search_Star, search_T
 import time
+
 
 SPACE = " "
 X = "X"  # Player 0 is X
@@ -66,6 +69,8 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
             board = [[SPACE for _ in range(dim)] for _ in range(dim)]
         self._start_state = TTTState(board, player_to_move)
         self.pattern = pattern
+        searches = {'l': search_L, 'line': self.search_Line, 'v': search_V, 'star': search_Star, 't': search_T}
+        self.search_win = searches[pattern]
 
     def heuristic_func(self, state: TTTState, player_index: int) -> float:
         """
@@ -94,23 +99,43 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         return TTTState(board, 1 - state.ptm)
 
     def is_terminal_state(self, state):
-        if self.pattern == 'l':
-            return not (self._internal_evaluate_terminal_l(state) == "non-terminal")
-        else:
-            return not (self._internal_evaluate_terminal(state) == "non-terminal")
+        return not (self.internal_evaluate_terminal(state) == "non-terminal")
             
 
     def evaluate_terminal(self, state):
-        if self.pattern == 'l':
-            internal_val = self._internal_evaluate_terminal_l(state)
-        else:
-            internal_val = self._internal_evaluate_terminal(state)
+        internal_val = self.internal_evaluate_terminal(state)
         if internal_val == "non-terminal":
             raise ValueError("attempting to evaluate a non-terminal state")
         else:
             return internal_val
-
-    def _internal_evaluate_terminal(self, state):
+        
+    def internal_evaluate_terminal(self, state):
+        """
+        If state is terminal, returns its evaluation;
+        otherwise, returns 'non-terminal'.
+        """
+        board = state.board
+        rows = self._dim
+        cols = self._dim
+        
+        for row in range(rows):
+            for col in range(cols):
+                if board[row][col] == X:
+                    if self.search_win(X, board, row, col):
+                        return [1.0, 0.0]
+                elif board[row][col] == O:
+                    if self.search_win(O, board, row, col):
+                        return [0.0, 1.0]
+                    
+        if self.get_available_actions(state) == set():
+            # all spaces are filled up
+            return [0.5, 0.5]
+        else:
+            return "non-terminal"
+        
+        
+    #Leaving in this class temporarily 
+    def search_Line(self, state):
         """
         If state is terminal, returns its evaluation;
         otherwise, returns 'non-terminal'.
@@ -146,77 +171,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         else:
             return "non-terminal"
         
-    def search_L(self, c, board, row, col):
-        #Searches for a len 5 L pattern of c's 
-        rows = self._dim
-        cols = self._dim
-        if (row - 2 <= 0 and col + 2 < cols and
-            board[row-1][col] == c and
-            board[row-2][col] == c and
-            board[row][col+1] == c and
-            board[row][col+2] == c):
-            return True
-        if (row + 2 < rows and col + 2 < cols and
-            board[row + 1][col] == c and
-            board[row + 2][col] == c and
-            board[row][col+1] == c and
-            board[row][col+2] == c):
-            return True
-        if (row - 2 <= 0 and col - 2 >= 0 and
-            board[row-1][col] == c and
-            board[row-2][col] == c and
-            board[row][col-1] == c and
-            board[row][col-2] == c):
-            return True
-        if (row + 2 < rows and col + 2 < cols and
-            board[row + 1][col] == c and
-            board[row + 2][col] == c and
-            board[row][col-1] == c and
-            board[row][col-2] == c):
-            return True
-        return False
-        
-        
-    def _internal_evaluate_terminal_l(self, state):
-        """
-        If state is terminal, returns its evaluation;
-        otherwise, returns 'non-terminal'.
-        """
-        board = state.board
-        rows = self._dim
-        cols = self._dim
-        
-        for row in range(rows):
-            for col in range(cols):
-                if board[row][col] == X:
-                    if self.search_L(X, board, row, col):
-                        return [1.0, 0.0]
-                elif board[row][col] == O:
-                    if self.search_L(O, board, row, col):
-                        return [0.0, 1.0]
-                    
-                    
-        if self.get_available_actions(state) == set():
-            # all spaces are filled up
-            return [0.5, 0.5]
-        else:
-            return "non-terminal"
 
-
-        
-
-        
-    #TODO
-    def _internal_evaluate_terminal_t(self, state):
-        pass
-        
-    #TODO
-    def _internal_evaluate_terminal_v(self, state):
-        pass
-    
-    #TODO
-    def _internal_evaluate_terminal_cross(self, state):
-        pass
 
 
     @staticmethod
