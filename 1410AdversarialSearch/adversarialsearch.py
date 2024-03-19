@@ -21,6 +21,7 @@ def minimax(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
     Output:
         an action (an element of asp.get_available_actions(asp.get_start_state()))
     """
+    print("minimax playing.....")
     state = asp.get_start_state()
     bestMove = None
     bestVal = float("-inf")
@@ -221,6 +222,7 @@ def general_minimax(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
     Output:
         an action (an element of asp.get_available_actions(asp.get_start_state()))
     """
+    print("general_minimax")
     state = asp.get_start_state()
     bestMove = None
     bestVal = float("-inf")

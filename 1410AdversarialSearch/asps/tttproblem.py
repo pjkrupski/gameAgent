@@ -18,7 +18,7 @@
 from typing import Tuple
 from adversarialsearchproblem import AdversarialSearchProblem, GameState, GameUI
 #import searchWinPatterns.search_L
-from searches import search_L, search_V, search_Star, search_T
+from searches import search_L, search_Line, search_V, search_Star, search_T
 import time
 
 
@@ -69,7 +69,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
             board = [[SPACE for _ in range(dim)] for _ in range(dim)]
         self._start_state = TTTState(board, player_to_move)
         self.pattern = pattern
-        searches = {'l': search_L, 'line': self.search_Line, 'v': search_V, 'star': search_Star, 't': search_T}
+        searches = {'l': search_L, 'line': search_Line, 'v': search_V, 'star': search_Star, 't': search_T}
         self.search_win = searches[pattern]
 
     def heuristic_func(self, state: TTTState, player_index: int) -> float:
@@ -132,65 +132,8 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
             return [0.5, 0.5]
         else:
             return "non-terminal"
-        
-        
-    #Leaving in this class temporarily 
-    def search_Line(self, state):
-        """
-        If state is terminal, returns its evaluation;
-        otherwise, returns 'non-terminal'.
-        """
-        board = state.board
-
-        diagonal1 = [board[i][i] for i in range(self._dim)]
-        # bind the output of _all_same for diagonal1 for its two uses
-        asd1 = TTTProblem._all_same(diagonal1)
-        if asd1:  # #onlyinpython / #imissoptions
-            return asd1
-
-        diagonal2 = [board[i][self._dim - 1 - i] for i in range(self._dim)]
-        asd2 = TTTProblem._all_same(diagonal2)
-        if asd2:
-            return asd2
-
-        for row in board:
-            asr = TTTProblem._all_same(row)
-            if asr:
-                return asr
-
-        for c in range(self._dim):
-            # why oh why didn't I just use numpy arrays?
-            col = [board[r][c] for r in range(self._dim)]
-            asc = TTTProblem._all_same(col)
-            if asc:
-                return asc
-
-        if self.get_available_actions(state) == set():
-            # all spaces are filled up
-            return [0.5, 0.5]
-        else:
-            return "non-terminal"
-        
-
-
-
-    @staticmethod
-    def _all_same(cell_list):
-        """
-        Given a list of cell contents, e.g. ['x', ' ', 'X'],
-        returns [1.0, 0.0] if they're all X, [0.0, 1.0] if they're all O,
-        and False otherwise.
-        """
-        xlist = [cell == X for cell in cell_list]
-        if all(xlist):
-            return [1.0, 0.0]
-
-        olist = [cell == O for cell in cell_list]
-        if all(olist):
-            return [0.0, 1.0]
-
-        return False
-
+   
+   
     @staticmethod
     def board_to_pretty_string(board):
         """
