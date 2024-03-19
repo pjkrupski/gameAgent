@@ -121,10 +121,10 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         for row in range(rows):
             for col in range(cols):
                 if board[row][col] == X:
-                    if self.search_win(X, board, row, col):
+                    if self.search_win(self, X, board, row, col):
                         return [1.0, 0.0]
                 elif board[row][col] == O:
-                    if self.search_win(O, board, row, col):
+                    if self.search_win(self, O, board, row, col):
                         return [0.0, 1.0]
                     
         if self.get_available_actions(state) == set():
