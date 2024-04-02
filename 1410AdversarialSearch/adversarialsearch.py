@@ -49,6 +49,7 @@ def max_value(asp, state, player):
 
 
 def min_value(asp, state, player):
+    #
     if asp.is_terminal_state(state):
         payoffs = asp.evaluate_terminal(state)
         return payoffs[player]
