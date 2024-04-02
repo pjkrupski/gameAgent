@@ -1,5 +1,5 @@
 
-
+#look at this
 def search_L(self, c, board, row, col):
         #Searches for a len 5 L pattern of c's 
         rows = self._dim

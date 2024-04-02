@@ -71,6 +71,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         self.pattern = pattern
         searches = {'l': search_L, 'line': search_Line, 'v': search_V, 'star': search_Star, 't': search_T}
         self.search_win = searches[pattern]
+        print("Win search: ", self.search_win)
 
     def heuristic_func(self, state: TTTState, player_index: int) -> float:
         """
