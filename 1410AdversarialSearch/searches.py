@@ -75,26 +75,22 @@ def search_Line(self, c, board, row, col):
     diagonal1 = [board[i][i] for i in range(self._dim)]
     
     # bind the output of _all_same for diagonal1 for its two uses
-    asd1 = _all_same(diagonal1, c)
-    if asd1:  # #onlyinpython / #imissoptions
-        return asd1
+    if _all_same(diagonal1, c):  # #onlyinpython / #imissoptions
+        return True
 
     diagonal2 = [board[i][self._dim - 1 - i] for i in range(self._dim)]
-    asd2 = _all_same(diagonal2, c)
-    if asd2:
-        return asd2
+    if _all_same(diagonal2, c):
+        return True
 
     for row in board:
-        asr = _all_same(row, c)
-        if asr:
-            return asr
+        if _all_same(row, c):
+            return True
 
     for c in range(self._dim):
         # why oh why didn't I just use numpy arrays?
         col = [board[r][c] for r in range(self._dim)]
-        asc = _all_same(col, c)
-        if asc:
-            return asc
+        if _all_same(col, c):
+            return True
     return False
 
     
@@ -106,12 +102,8 @@ def _all_same(cell_list, c):
     returns [1.0, 0.0] if they're all X, [0.0, 1.0] if they're all O,
     and False otherwise.
     """
-    xlist = [cell == c for cell in cell_list]
-    if all(xlist):
-        return [1.0, 0.0]
-
-    olist = [cell == c for cell in cell_list]
-    if all(olist):
-        return [0.0, 1.0]
+    lst = [cell == c for cell in cell_list]
+    if all(lst):
+        return True
 
     return False
