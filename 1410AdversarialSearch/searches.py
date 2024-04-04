@@ -1,22 +1,47 @@
 
 #look at this
-def search_L(self, c, board, row, col):
-        # rows = self._dim
-        # cols = self._dim
-        top_left_corner = [board[0][0], board[1][0], board[0][1]]
-        top_right_corner = [board[0][-1], board[0][-2], board[-1][1]]
-        bottom_left_corner = [board[-1][0], board[-2][0], board[-1][1]]
-        bottom_right_corner = [board[-1][-1], board[-1][-2], board[-2][-1]]
+def search_L(self, target_char, board, row, col):
+    # Define offsets for all possible L-shapes
+    l_shape_offsets = [
+        ((0, 1), (1, 0)),   # Top left
+        ((0, -1), (1, 0)),  # Top right
+        ((-1, 0), (0, 1)),  # Bottom left
+        ((-1, 0), (0, -1))  # Bottom right
+    ]
+
+    # Iterate through all cells in the board
+    for r in range(len(board)):
+        for c in range(len(board[0])):
+            for offset1, offset2 in l_shape_offsets:
+                # Calculate coordinates for the two offsets
+                r1, c1 = r + offset1[0], c + offset1[1]
+                r2, c2 = r + offset2[0], c + offset2[1]
+
+                # Ensure the offsets are within the board bounds
+                if 0 <= r1 < len(board) and 0 <= c1 < len(board[0]) and \
+                   0 <= r2 < len(board) and 0 <= c2 < len(board[0]):
+                    # Check if the cells form an L-shape with the target character
+                    if _all_same([board[r][c], board[r1][c1], board[r2][c2]], target_char):
+                        return True
+
+    return False
+# def search_L(self, c, board, row, col):
+#         # rows = self._dim
+#         # cols = self._dim
+#         top_left_corner = [board[0][0], board[1][0], board[0][1]]
+#         top_right_corner = [board[0][-1], board[0][-2], board[1][-1]]
+#         bottom_left_corner = [board[-1][0], board[-2][0], board[-1][1]]
+#         bottom_right_corner = [board[-1][-1], board[-1][-2], board[-2][-1]]
         
-        if _all_same(top_left_corner, c):
-            return True
-        if _all_same(top_right_corner, c):
-            return True
-        if _all_same(bottom_left_corner, c):
-            return True
-        if _all_same(bottom_right_corner, c):
-            return True
-        return False
+#         if _all_same(top_left_corner, c):
+#             return True
+#         if _all_same(top_right_corner, c):
+#             return True
+#         if _all_same(bottom_left_corner, c):
+#             return True
+#         if _all_same(bottom_right_corner, c):
+#             return True
+#         return False
         #Searches for a len 5 L pattern of c's 
         # rows = self._dim
         # cols = self._dim
