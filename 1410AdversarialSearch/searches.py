@@ -2,10 +2,22 @@
 #look at this
 def search_L(self, target_char, board, row, col):
     for r in range(len(board)):
-        for c in range(len(board)):
+        for c in range(len(board[0])):
             if board[r][c] == target_char:
                 #work on caching and storing visited nodes
-                num_neighbors = True
+                num_neighbors = 0
+                if c+1 < len(board[0]) and board[r][c+1] == target_char:
+                    num_neighbors += 1
+                if c-1 >= 0 and board[r][c-1] == target_char:
+                    num_neighbors += 1
+                if r+1 < len(board) and board[r+1][c] == target_char:
+                    num_neighbors += 1
+                if r-1 >= 0 and board[r-1][c] == target_char:
+                    num_neighbors += 1
+                if num_neighbors >= 2:
+                    return True
+
+
     # # Define offsets for all possible L-shapes
     # l_shape_offsets = [
     #     ((0, 1), (1, 0)),   # Top left
