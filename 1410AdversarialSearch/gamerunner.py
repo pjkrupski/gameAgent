@@ -94,7 +94,7 @@ def main():
     )
     parser.add_argument("--cutoff", type=int, default=None)
     parser.add_argument("--x", type=int, default=4)
-    parser.add_argument("--pattern", choices=["l", "line", "star", "v"], default="line")
+    parser.add_argument("--pattern", choices=["l", "line", "t", "v"], default="line")
     args = parser.parse_args()
     print(args.x, " is x")
     player_args = [args.player1, args.player2]

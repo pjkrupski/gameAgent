@@ -20,11 +20,12 @@ from adversarialsearchproblem import AdversarialSearchProblem, GameState, GameUI
 #import searchWinPatterns.search_L
 from searches import search_L, search_Line, search_V, search_Star, search_T
 import time
+import numpy as np 
 
 
-SPACE = " "
-X = "X"  # Player 0 is X
-O = "O"  # Player 1 is O
+SPACE = 0
+X = 1  # Player 0 is X
+O = -1  # Player 1 is O
 PLAYER_SYMBOLS = [X, O]
 
 
@@ -66,7 +67,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         """
         self._dim = dim
         if board == None:
-            board = [[SPACE for _ in range(dim)] for _ in range(dim)]
+            board = np.full(shape=(dim,dim), fill_value=SPACE)
         self._start_state = TTTState(board, player_to_move)
         self.pattern = pattern
         searches = {'l': search_L, 'line': search_Line, 'v': search_V, 'star': search_Star, 't': search_T}
@@ -83,10 +84,15 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
 
     def get_available_actions(self, state):
         actions = set()
-        for r in range(self._dim):
-            for c in range(self._dim):
-                if state.board[r][c] == " ":
-                    actions.add((r, c))
+        # for r in range(self._dim):
+        #     for c in range(self._dim):
+        #         if state.board[r][c] == SPACE:
+        #             actions.add((r, c))
+        
+        for i in np.argwhere(state.board == SPACE):
+            actions.add((i[0], i[1]))
+        
+        
         return actions
 
     def transition(self, state, action):
@@ -94,7 +100,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         assert action in self.get_available_actions(state)
 
         # make deep copy of board
-        board = [[elt for elt in row] for row in state.board]
+        board = np.copy(state.board)
 
         board[action[0]][action[1]] = PLAYER_SYMBOLS[state.ptm]
         return TTTState(board, 1 - state.ptm)
@@ -116,19 +122,23 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         otherwise, returns 'non-terminal'.
         """
         board = state.board
-        rows = self._dim
-        cols = self._dim
-        
-        for row in range(rows):
-            for col in range(cols):
-                if board[row][col] == X:
-                    if self.search_win(self, X, board, row, col):
-                        return [1.0, 0.0]
-                elif board[row][col] == O:
-                    if self.search_win(self, O, board, row, col):
-                        return [0.0, 1.0]
-                    
-        if self.get_available_actions(state) == set():
+        # rows = self._dim
+        # cols = self._dim
+        # 
+        # for row in range(rows):
+        #     for col in range(cols):
+        #         if board[row][col] == X:
+        #             if self.search_win(self, X, board, row, col):
+        #                 return [1.0, 0.0]
+        #         elif board[row][col] == O:
+        #             if self.search_win(self, O, board, row, col):
+        #                 return [0.0, 1.0]
+        x = self.search_win(self, board)
+        if x == X:
+            return [1.0, 0.0]
+        elif x == O:
+            return [0.0, 1.0]
+        elif self.get_available_actions(state) == set():
             # all spaces are filled up
             return [0.5, 0.5]
         else:
@@ -145,6 +155,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         vbar = "|"
         corner = "+"
         dim = len(board)
+        valToString = [" ", "X", "O"]
 
         s = corner
         for _ in range(2 * dim - 1):
@@ -154,7 +165,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         for r in range(dim):
             s += vbar
             for c in range(dim):
-                s += str(board[r][c]) + " "
+                s += valToString[board[r][c]] + " "
             s = s[:-1]
             s += vbar
             s += "\n"
