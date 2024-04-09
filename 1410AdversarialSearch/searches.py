@@ -31,10 +31,25 @@ def search_T(self, board):
     
 
 def search_By_Pattern(self, board, kernel, size):
-    x = correlate2d(board, kernel, mode="valid")
-    if -size in x:
+    x1 = correlate2d(board, kernel, mode="valid")
+    x2 = correlate2d(board, np.rot90(kernel), mode="valid")
+    x3 = correlate2d(board, np.rot90(kernel), mode="valid")
+    x4 = correlate2d(board, np.rot90(kernel), mode="valid")
+    if -size in x1:
         return -1
-    if size in x:
+    if size in x1:
+        return 1
+    if -size in x2:
+        return -1
+    if size in x2:
+        return 1
+    if -size in x3:
+        return -1
+    if size in x3:
+        return 1
+    if -size in x4:
+        return -1
+    if size in x4:
         return 1
     return 0
 
