@@ -23,14 +23,12 @@ def minimax(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
         an action (an element of asp.get_available_actions(asp.get_start_state()))
     """
     print("minimax playing.....")
-    begin = time.time()
-    num_it = 0
     state = asp.get_start_state()
     bestMove = None
     bestVal = float("-inf")
     player = state.player_to_move()
+    print("player to move is ", player, flush=True)
     for action in asp.get_available_actions(state):
-        print("NEW ACTION===============================")
         next_state = asp.transition(state, action)
         val = min_value(asp, next_state, player)
         if val > bestVal:
@@ -45,11 +43,11 @@ def minimax(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
 
 
 def max_value(asp, state, player):
-    # print("We are at: {num_it} iterations.")
     if asp.is_terminal_state(state):
         payoffs = asp.evaluate_terminal(state)
         return payoffs[player]
     v = float("-inf")
+    print("getting available actions in max... ")
     for a in asp.get_available_actions(state):
         next_state = asp.transition(state, a)
         v = max(v, min_value(asp, next_state, player))
@@ -57,11 +55,11 @@ def max_value(asp, state, player):
 
 
 def min_value(asp, state, player):
-    #
     if asp.is_terminal_state(state):
         payoffs = asp.evaluate_terminal(state)
         return payoffs[player]
     v = float("inf")
+    print("getting available actions in min... ")
     for a in asp.get_available_actions(state):
         next_state = asp.transition(state, a)
         v = min(v, max_value(asp, next_state, player))
