@@ -3,6 +3,10 @@ To run a game, run one of these commands inside gameAgent/1410AdversarialSearch
 python gamerunner.py --game=connect4 --dimension=8 --player1=self --player2=self --x 5
 
 python gamerunner.py --game=ttt --dimension=8 --player1=self --player2=self
+python3 gamerunner.py --game=ttt --dimension=8 --player1=self --player2=self
+
+python3 gamerunner.py --game=ttt --dimension=3 --player1=self --player2=self --pattern=line
+
 
 
 

@@ -1,5 +1,6 @@
 import sys
 from typing import Callable
+import time
 
 sys.path.insert(0, "../../to_distribute")
 
@@ -21,26 +22,27 @@ def minimax(asp: AdversarialSearchProblem[GameState, Action]) -> Action:
     Output:
         an action (an element of asp.get_available_actions(asp.get_start_state()))
     """
-    print("minimax playing.....", flush=True)
+    print("minimax playing.....")
     state = asp.get_start_state()
     bestMove = None
     bestVal = float("-inf")
     player = state.player_to_move()
     print("player to move is ", player, flush=True)
     for action in asp.get_available_actions(state):
-        print("searching some action... ", flush=True)
         next_state = asp.transition(state, action)
         val = min_value(asp, next_state, player)
         if val > bestVal:
             bestMove = action
             bestVal = val
+        num_it += 1
+    print("num it: ", num_it)
+    print(f"This took: {time.time() - begin} seconds")
 
     assert bestMove is not None
     return bestMove
 
 
 def max_value(asp, state, player):
-    print("max value ", flush=True)
     if asp.is_terminal_state(state):
         payoffs = asp.evaluate_terminal(state)
         return payoffs[player]
@@ -53,7 +55,6 @@ def max_value(asp, state, player):
 
 
 def min_value(asp, state, player):
-    print("min value ", flush=True)
     if asp.is_terminal_state(state):
         payoffs = asp.evaluate_terminal(state)
         return payoffs[player]

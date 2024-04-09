@@ -31,10 +31,25 @@ def search_T(self, board):
     
 
 def search_By_Pattern(self, board, kernel, size):
-    x = correlate2d(board, kernel, mode="valid")
-    if -size in x:
+    x1 = correlate2d(board, kernel, mode="valid")
+    x2 = correlate2d(board, np.rot90(kernel), mode="valid")
+    x3 = correlate2d(board, np.rot90(kernel), mode="valid")
+    x4 = correlate2d(board, np.rot90(kernel), mode="valid")
+    if -size in x1:
         return -1
-    if size in x:
+    if size in x1:
+        return 1
+    if -size in x2:
+        return -1
+    if size in x2:
+        return 1
+    if -size in x3:
+        return -1
+    if size in x3:
+        return 1
+    if -size in x4:
+        return -1
+    if size in x4:
         return 1
     return 0
 
@@ -58,14 +73,18 @@ def search_Line(self, board):
     
 
 
-def _all_same(cell_list, c):
+def _all_same(cell_list, target_char):
     """
     Given a list of cell contents, e.g. ['x', ' ', 'X'],
     returns [1.0, 0.0] if they're all X, [0.0, 1.0] if they're all O,
     and False otherwise.
     """
-    lst = [cell == c for cell in cell_list]
-    if all(lst):
-        return True
+    xlist = [cell == c for cell in cell_list]
+    if all(xlist):
+        return [1.0, 0.0]
+
+    olist = [cell == c for cell in cell_list]
+    if all(olist):
+        return [0.0, 1.0]
 
     return False
