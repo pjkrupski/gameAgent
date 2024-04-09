@@ -1,97 +1,59 @@
+from scipy.signal import correlate2d
+import numpy as np
+
+kernel = np.array(((1, 0, 0), (1, 0, 0), (1, 1, 1)))
+L_Pattern = [kernel, np.sum(kernel)]
+
+kernel = np.array(((1, 0, 1), (0, 1, 0)))
+V_Pattern = [kernel, np.sum(kernel)]
+
+kernel = np.array(((1, 1, 1), (0, 1, 0), (0, 1, 0)))
+T_Pattern = [kernel, np.sum(kernel)]
 
 
-def search_L(self, c, board, row, col):
-        #Searches for a len 5 L pattern of c's 
-        rows = self._dim
-        cols = self._dim
-        if (row - 2 <= 0 and col + 2 < cols and
-            board[row-1][col] == c and
-            board[row-2][col] == c and
-            board[row][col+1] == c and
-            board[row][col+2] == c):
-            return True
-        if (row + 2 < rows and col + 2 < cols and
-            board[row + 1][col] == c and
-            board[row + 2][col] == c and
-            board[row][col+1] == c and
-            board[row][col+2] == c):
-            return True
-        if (row - 2 <= 0 and col - 2 >= 0 and
-            board[row-1][col] == c and
-            board[row-2][col] == c and
-            board[row][col-1] == c and
-            board[row][col-2] == c):
-            return True
-        if (row + 2 < rows and col + 2 < cols and
-            board[row + 1][col] == c and
-            board[row + 2][col] == c and
-            board[row][col-1] == c and
-            board[row][col-2] == c):
-            return True
-        return False
+def search_L(self, board):
+    #Searches for a len 5 L pattern of c's 
+    return search_By_Pattern(self, board, *L_Pattern)
 
 #TODO
-def search_V():
+def search_V(self, board):
+    return search_By_Pattern(self, board, *V_Pattern)
+
+#TODO
+def search_Star(self, board):
     pass
 
 #TODO
-def search_Star():
-    pass
-
-#TODO
-def search_T(self, c, board, row, col):
+def search_T(self, board):
 #Searches for a len 5 L pattern of c's 
-    rows = self._dim
-    cols = self._dim
-    if (col + 2 < cols and row + 2 < rows and
-        board[row][col+1] == c and
-        board[row][col+2] == c and
-        board[row+1][col+1] == c and
-        board[row+2][col+1] == c):
-        return True
-    if (row + 1 < rows and row - 1 <= 0 and col + 2 < cols and
-        board[row - 1][col] == c and
-        board[row + 1][col] == c and
-        board[row+1][col+1] == c and
-        board[row+1][col+2] == c):
-        return True
-    if (row - 2 <= 0 and col + 2 < cols and
-        board[row][col+1] == c and
-        board[row][col+2] == c and
-        board[row-1][col+1] == c and
-        board[row-2][col+1] == c):
-        return True
-    if (row + 1 < rows and row - 1 >= 0 and col + 2 < cols and
-        board[row][col+1] == c and
-        board[row][col+2] == c and
-        board[row-1][col+1] == c and
-        board[row+1][col+2] == c):
-        return True
-    return False
-
-def search_Line(self, c, board, row, col):
-#Searches for a len(board) line of c's 
-   
-    diagonal1 = [board[i][i] for i in range(self._dim)]
+    kernel = np.array(((1, 1, 1), (0, 1, 0), (0, 0, 1)))
+    return search_By_Pattern(self, board, *T_Pattern)
     
-    # bind the output of _all_same for diagonal1 for its two uses
-    if _all_same(diagonal1, c):  # #onlyinpython / #imissoptions
-        return True
 
-    diagonal2 = [board[i][self._dim - 1 - i] for i in range(self._dim)]
-    if _all_same(diagonal2, c):
-        return True
+def search_By_Pattern(self, board, kernel, size):
+    x = correlate2d(board, kernel, mode="valid")
+    if -size in x:
+        return -1
+    if size in x:
+        return 1
+    return 0
 
-    for row in board:
-        if _all_same(row, c):
-            return True
 
-    for c in range(self._dim):
-        # why oh why didn't I just use numpy arrays?
-        col = [board[r][c] for r in range(self._dim)]
-        if _all_same(col, c):
-            return True
-    return False
+def search_Line(self, board):
+#Searches for a len(board) line of c's 
+   #transposition to check rows, then columns
+    for TBoard in [board, np.transpose(board)]:
+        # Check all the rows
+        for row in TBoard:
+            if len(set(row)) == 1:
+                return row[0]
+    
+    # Check all the Diagonals
+    if len(set([board[i][i] for i in range(len(board))])) == 1:
+        return board[0][0]
+    if len(set([board[i][len(board)-i-1] for i in range(len(board))])) == 1:
+        return board[0][len(board)-1]
+    return 0
 
     
 
