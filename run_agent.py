@@ -49,7 +49,7 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
             game_ui.update_state(state)
             game_ui.render()
 
-        print(asp.board_to_pretty_string(state.board))
+        #print(asp.board_to_pretty_string(state.board))
 
     tup = asp.evaluate_terminal(state)
 
@@ -68,7 +68,7 @@ def main():
       t = TTTProblem()
       run_game(t, [s, r])
 
-    print(s.graph)
+    #print(s.graph)
 
 if __name__ == "__main__":
     main()

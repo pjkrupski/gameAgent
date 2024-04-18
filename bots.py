@@ -42,7 +42,6 @@ class StudentBot:
         :param discount_factor: Gamma discounting factor to use, defaults to .99
         :returns: discounted_rewards: list containing the discounted rewards for each timestep in the original rewards list
         """
-        # TODO: Compute discounted rewards
 
         if len(rewards) == 1:
             return rewards
@@ -67,7 +66,7 @@ class StudentBot:
 
         cstate = asp.get_start_state()
 
-        cells = 8
+        cells = 8 #Why does cells start at 8? 
 
         board = cstate.board
 
@@ -77,7 +76,7 @@ class StudentBot:
         for row in range(len(board)):
             for col in range(len(board[row])):
                 if board[row][col] == 'X':
-                    state[row][col][0] = 1
+                    state[row][col][0] = 1     
                 elif board[row][col] == 'O':
                     state[row][col][1] = 1
 
@@ -101,19 +100,14 @@ class StudentBot:
         if probs.sum() == 0:
             probs += 0.1
 
-        #if self.games > 0 and self.games < 10000:
-
-            #probs = probs + 0.1 - (0.1*self.games/10000)
-
-        if self.games % 100 == 0:
-            if len(self.actions)%5 == 0:
-                print(pred)
+        #if self.games % 100 == 0:
+        #    if len(self.actions) % 5 == 0:
+        #        print(pred)
 
         probs /= probs.sum()
 
         output = np.random.choice(idx, 1, p=probs)[0]
-        #print(output)
-        #print(moves[output])
+    
 
         self.rewards.append(0)
         self.actions.append(output)
@@ -128,9 +122,9 @@ class StudentBot:
         if win:
           self.rewards[-1] = 1
           self.wins += 1
-          print("win")
-        else:
-          print("lose")
+        #  print("win")
+        #else:
+        #  print("lose")
 
         if len(self.rewards) > 0:
 
@@ -148,7 +142,7 @@ class StudentBot:
             print("Games: " + str(self.games))
 
             self.graph.append(self.wins)
-            self.wins = 0
+            #self.wins = 0
 
         self.rewards = []
         self.states = []
