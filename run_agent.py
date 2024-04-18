@@ -2,6 +2,9 @@ from adversarialsearchproblem import AdversarialSearchProblem
 from bots import StudentBot, RandomBot
 from tttproblem import TTTProblem
 
+import matplotlib.pyplot as plt 
+import numpy as np 
+
 
 def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
     """
@@ -49,8 +52,6 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
             game_ui.update_state(state)
             game_ui.render()
 
-        #print(asp.board_to_pretty_string(state.board))
-
     tup = asp.evaluate_terminal(state)
 
     bots[0].cleanup(tup[0] == 1.0)
@@ -64,11 +65,17 @@ def main():
     s = StudentBot()
     r = RandomBot()
 
-    for i in range(1000):
+    games = 10000
+    for i in range(games):
       t = TTTProblem()
       run_game(t, [s, r])
 
-    #print(s.graph)
+      if i%100 == 0: 
+        print(t.board_to_pretty_string(t.get_start_state().board))
+
+    print(s.graph)
+    plt.plot(np.arange(int(games/100)), s.graph)
+    plt.savefig("plot.png")
 
 if __name__ == "__main__":
     main()

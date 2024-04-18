@@ -7,7 +7,7 @@ import numpy as np
 
 ACTIONS = 9
 
-model = Reinforce(13, 13, ACTIONS)
+model = Reinforce(3, 3, ACTIONS)
 
 class StudentBot:
     
@@ -108,7 +108,6 @@ class StudentBot:
 
         output = np.random.choice(idx, 1, p=probs)[0]
     
-
         self.rewards.append(0)
         self.actions.append(output)
         self.states.append(state)
@@ -138,11 +137,11 @@ class StudentBot:
             print("NO REWARDS!")
 
         if self.games%100 == 0:
-            print("Wins: " + str(self.wins))
+            print("Wins last 100: " + str(self.wins))
             print("Games: " + str(self.games))
 
             self.graph.append(self.wins)
-            #self.wins = 0
+            self.wins = 0
 
         self.rewards = []
         self.states = []
