@@ -21,7 +21,7 @@ class Reinforce(tf.keras.Model):
 
         # TODO: Define network parameters and optimizer
 
-        self.optimizer = tf.optimizers.Adam(learning_rate=0.00005)
+        self.optimizer = tf.optimizers.Adam(learning_rate=0.01)     #.00005
 
         #self.D1 = tf.keras.layers.Conv2D(filters=32, kernel_size=1, strides = (1,1), activation = 'relu', input_shape=[state_size,state_size2,8])
 
