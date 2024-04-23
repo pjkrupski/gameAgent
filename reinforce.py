@@ -23,7 +23,7 @@ class Reinforce(tf.keras.Model):
 
         self.optimizer = tf.optimizers.Adam(learning_rate=0.1)     #.00005
 
-        #self.D1 = tf.keras.layers.Conv2D(filters=32, kernel_size=1, strides = (1,1), activation = 'relu', input_shape=[state_size,state_size2,8])
+        self.D1 = tf.keras.layers.Conv2D(filters=16, kernel_size=3, strides = (1,1), activation = 'relu', input_shape=[state_size,state_size2,2], padding="same")
 
         self.D2 = tf.keras.layers.Dense(num_actions, kernel_initializer=tf.keras.initializers.RandomUniform(
         minval=-0.03, maxval=0.03))
@@ -40,7 +40,8 @@ class Reinforce(tf.keras.Model):
         for each state in the episode
         """
         
-        logits = tf.keras.layers.Flatten()(states)
+        logits = self.D1(states)
+        logits = tf.keras.layers.Flatten()(logits)
 
         logits = self.D2(logits)
         probs = tf.nn.softmax(logits)

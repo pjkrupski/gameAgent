@@ -2,6 +2,9 @@ from adversarialsearchproblem import AdversarialSearchProblem
 from bots import StudentBot, RandomBot, MinmaxBot
 from tttproblem import TTTProblem
 
+import matplotlib.pyplot as plt 
+import numpy as np 
+
 
 def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
     """
@@ -64,7 +67,8 @@ def main():
     s = StudentBot()
     m = MinmaxBot()
 
-    for i in range(1000):
+    games = 10000
+    for i in range(games):
       t = TTTProblem()
       run_game(t, [s, m])
 
