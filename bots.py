@@ -62,9 +62,6 @@ class StudentBot:
         state by calling asp.get_start_state()
         """
 
-        #print("check-1")
-        #print("check-2")
-
         cstate = asp.get_start_state()
 
         cells = 8 #Why does cells start at 8? 
@@ -100,10 +97,6 @@ class StudentBot:
 
         if probs.sum() == 0:
             probs += 0.1
-
-        #if self.games % 100 == 0:
-        #    if len(self.actions) % 5 == 0:
-        #        print(pred)
 
         probs /= probs.sum()
 

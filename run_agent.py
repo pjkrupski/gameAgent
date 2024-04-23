@@ -52,7 +52,8 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
             game_ui.update_state(state)
             game_ui.render()
 
-        print(asp.board_to_pretty_string(state.board))
+        if asp.is_terminal_state(state):
+            print(asp.board_to_pretty_string(state.board))
 
     tup = asp.evaluate_terminal(state)
 

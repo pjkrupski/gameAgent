@@ -40,19 +40,24 @@ def search_By_Pattern(self, board, kernel, size):
 
 
 def search_Line(self, board):
-#Searches for a len(board) line of c's 
-   #transposition to check rows, then columns
-    for TBoard in [board, np.transpose(board)]:
-        # Check all the rows
-        for row in TBoard:
-            if len(set(row)) == 1:
-                return row[0]
-    
-    # Check all the Diagonals
-    if len(set([board[i][i] for i in range(len(board))])) == 1:
-        return board[0][0]
-    if len(set([board[i][len(board)-i-1] for i in range(len(board))])) == 1:
-        return board[0][len(board)-1]
+   
+    diagonal1 = [board[i][i] for i in range(self._dim)]
+    if _all_same(diagonal1, -1) or _all_same(diagonal1, 1): 
+        return diagonal1[0]
+
+    diagonal2 = [board[i][self._dim - 1 - i] for i in range(self._dim)]
+    if _all_same(diagonal2, -1) or _all_same(diagonal2, 1):
+        return diagonal2[0]
+
+    for row in board:
+        if _all_same(row, -1) or _all_same(row, 1):
+            return row[0]
+
+    for c in range(self._dim):
+        col = [board[r][c] for r in range(self._dim)]
+        if _all_same(col, -1) or _all_same(col, 1):
+            return col[0]
+
     return 0
 
     
