@@ -25,3 +25,5 @@ python gamerunner.py --player1=self --player2=minimax --game=ttt --dimension=8 -
 
 
 Use .split() instead of passing param?????
+
+TEST
