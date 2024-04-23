@@ -1,5 +1,6 @@
 from reinforce import Reinforce
 from tttproblem import TTTProblem
+from adversarialsearch import minimax
 import tensorflow as tf
 import numpy as np
 
@@ -7,7 +8,7 @@ import numpy as np
 
 ACTIONS = 9
 
-model = Reinforce(13, 13, ACTIONS)
+model = Reinforce(3, 3, ACTIONS)
 
 class StudentBot:
     
@@ -108,7 +109,6 @@ class StudentBot:
 
         output = np.random.choice(idx, 1, p=probs)[0]
     
-
         self.rewards.append(0)
         self.actions.append(output)
         self.states.append(state)
@@ -138,11 +138,11 @@ class StudentBot:
             print("NO REWARDS!")
 
         if self.games%100 == 0:
-            print("Wins: " + str(self.wins))
+            print("Wins last 100: " + str(self.wins))
             print("Games: " + str(self.games))
 
             self.graph.append(self.wins)
-            #self.wins = 0
+            self.wins = 0
 
         self.rewards = []
         self.states = []
@@ -180,11 +180,34 @@ class RandomBot:
 
                 if (i,j) in safe:
                     idx.append(i*3+j)
+                    
+        min_max_output = minimax(asp)
+        print(type(min_max_output), min_max_output, " is minmax return \n\n\n", flush=True)
 
         output = np.random.choice(idx)
-
+        #print(type(choices[output]), choices[output], "is choices ", flush=True)
         return choices[output]
 
     def cleanup(self):
 
         pass
+
+
+
+class MinmaxBot:
+
+    def __init__(self):
+      pass
+
+    def decide(self, asp: TTTProblem):
+        
+        output = minimax(asp)
+
+        return output
+
+    def cleanup(self):
+
+        pass
+
+
+

@@ -1,5 +1,5 @@
 from adversarialsearchproblem import AdversarialSearchProblem
-from bots import StudentBot, RandomBot
+from bots import StudentBot, RandomBot, MinmaxBot
 from tttproblem import TTTProblem
 
 
@@ -49,7 +49,7 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
             game_ui.update_state(state)
             game_ui.render()
 
-        #print(asp.board_to_pretty_string(state.board))
+        print(asp.board_to_pretty_string(state.board))
 
     tup = asp.evaluate_terminal(state)
 
@@ -62,11 +62,11 @@ def main():
     Provides an example of the TTTProblem class being used.
     """
     s = StudentBot()
-    r = RandomBot()
+    m = MinmaxBot()
 
     for i in range(1000):
       t = TTTProblem()
-      run_game(t, [s, r])
+      run_game(t, [s, m])
 
     #print(s.graph)
 

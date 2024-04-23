@@ -17,7 +17,6 @@
 
 from typing import Tuple
 from adversarialsearchproblem import AdversarialSearchProblem, GameState, GameUI
-#import searchWinPatterns.search_L
 from searches import search_L, search_Line, search_V, search_Star, search_T
 import time
 import numpy as np 
@@ -55,7 +54,7 @@ Action = Tuple[int, int]
 
 
 class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
-    def __init__(self, pattern="line", dim=3, board=None, player_to_move=0):
+    def __init__(self, pattern="v", dim=3, board=None, player_to_move=0):
         """
         Inputs:
                 dim- the number of cells in one row or column.
