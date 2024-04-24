@@ -3,8 +3,8 @@ import time
 
 from adversarialsearchproblem import AdversarialSearchProblem
 import adversarialsearch as MyImplementation
-from asps.tttproblem import TTTProblem, TTTUI
-from asps.connect4problem import Connect4Problem, Connect4GUI
+from tttproblem import TTTProblem, TTTUI
+# from connect4problem import Connect4Problem, Connect4GUI
 
 
 def get_custom_asp(args):
