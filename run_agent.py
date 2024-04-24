@@ -1,6 +1,7 @@
 from adversarialsearchproblem import AdversarialSearchProblem
 from bots import StudentBot, StudentBot2, RandomBot, MinmaxBot
 from tttproblem import TTTProblem
+from tensorflow.keras.models import load_model
 
 import matplotlib.pyplot as plt 
 import numpy as np 
@@ -52,7 +53,7 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
             game_ui.update_state(state)
             game_ui.render()
 
-        if asp.is_terminal_state(state) and bots[0].games%100 == 0:
+        if asp.is_terminal_state(state): # and bots[0].games%100 == 0:
             print(asp.board_to_pretty_string(state.board))
 
     tup = asp.evaluate_terminal(state)
@@ -65,17 +66,18 @@ def main():
     """
     Provides an example of the TTTProblem class being used.
     """
-    s = StudentBot2()
+    s = StudentBot()
+    random_trained = load_model("1000_line_vs_random")
     r = RandomBot()
     m = MinmaxBot()
 
-    games = 500
+    games = 1000
     for i in range(games):
       t = TTTProblem()
-      run_game(t, [s, r])
+      run_game(t, [s, m])
 
     print("saving model")
-    r.model.save("500_line_vs_random")
+    s.model.save("1000_line_vs_random")
 
     #print(s.graph)
 

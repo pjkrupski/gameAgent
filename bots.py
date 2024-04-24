@@ -135,7 +135,7 @@ class StudentBot:
             print("Games: " + str(self.games))
 
             self.graph.append(self.wins)
-            self.wins = 0
+            #self.wins = 0
 
         self.rewards = []
         self.states = []
@@ -302,7 +302,7 @@ class StudentBot2:
                 loss2 = model2.loss(self.states, self.actions, discounted_rewards)
 
             gradients = tape.gradient(loss2, model2.trainable_variables)
-            model.optimizer.apply_gradients(zip(gradients, model2.trainable_variables))
+            model2.optimizer.apply_gradients(zip(gradients, model2.trainable_variables))
         else:
             print("NO REWARDS!")
 
