@@ -1,14 +1,16 @@
 from scipy.signal import correlate2d
+from scipy.ndimage import rotate
 import numpy as np
 
-kernel = np.array(((1, 0, 0), (1, 0, 0), (1, 1, 1)))
-L_Pattern = [kernel, np.sum(kernel)]
+kernel = np.array(((1, 0), (1, 0), (1, 1)))
+kernel2 = np.array(((0, 1), (0, 1), (1, 1)))
+L_Pattern = [[kernel, kernel2], [np.sum(kernel), np.sum(kernel2)]]
 
 kernel = np.array(((1, 0, 1), (0, 1, 0)))
-V_Pattern = [kernel, np.sum(kernel)]
+V_Pattern = [[kernel], [np.sum(kernel)]]
 
 kernel = np.array(((1, 1, 1), (0, 1, 0), (0, 1, 0)))
-T_Pattern = [kernel, np.sum(kernel)]
+T_Pattern = [[kernel], [np.sum(kernel)]]
 
 
 def search_L(self, board):
@@ -30,12 +32,15 @@ def search_T(self, board):
     return search_By_Pattern(self, board, *T_Pattern)
     
 
-def search_By_Pattern(self, board, kernel, size):
-    x = correlate2d(board, kernel, mode="valid")
-    if -size in x:
-        return -1
-    if size in x:
-        return 1
+def search_By_Pattern(self, board, kernels, sizes):
+    for i, kernel in enumerate(kernels):
+        for x in range(4):
+            x = correlate2d(board, kernel, mode="valid")
+            if -sizes[i] in x:
+                return -1
+            if sizes[i] in x:
+                return 1
+            kernel = rotate(kernel, 90)
     return 0
 
 
