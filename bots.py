@@ -8,7 +8,6 @@ import numpy as np
 
 ACTIONS = 9
 
-model = Reinforce(3, 3, ACTIONS)
 model2 = ValueNN(3, 3, ACTIONS)
 
 class StudentBot:
@@ -16,7 +15,7 @@ class StudentBot:
 
     def __init__(self):
 
-
+        self.model = Reinforce(3, 3, ACTIONS)
         self.rewards = []
         self.states = []
         self.actions = []
@@ -79,7 +78,7 @@ class StudentBot:
                 elif board[row][col] == 'O':
                     state[row][col][1] = 1
 
-        pred = model(tf.expand_dims(state, 0))[0]
+        pred = self.model(tf.expand_dims(state, 0))[0]
         safe = asp.get_available_actions(cstate)
 
         probs = []
@@ -124,10 +123,10 @@ class StudentBot:
 
             with tf.GradientTape() as tape:
                 discounted_rewards = self.discount(self.rewards)
-                loss2 = model.loss(self.states, self.actions, discounted_rewards)
+                loss2 = self.model.loss(self.states, self.actions, discounted_rewards)
 
-            gradients = tape.gradient(loss2, model.trainable_variables)
-            model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+            gradients = tape.gradient(loss2, self.model.trainable_variables)
+            self.model.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
         else:
             print("NO REWARDS!")
 

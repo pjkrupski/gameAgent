@@ -66,12 +66,16 @@ def main():
     Provides an example of the TTTProblem class being used.
     """
     s = StudentBot2()
-    m = RandomBot()
+    r = RandomBot()
+    m = MinmaxBot()
 
-    games = 10000
+    games = 500
     for i in range(games):
       t = TTTProblem()
-      run_game(t, [s, m])
+      run_game(t, [s, r])
+
+    print("saving model")
+    r.model.save("500_line_vs_random")
 
     #print(s.graph)
 
