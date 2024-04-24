@@ -1,8 +1,10 @@
 from adversarialsearchproblem import AdversarialSearchProblem
 from bots import StudentBot, StudentBot2, RandomBot, MinmaxBot
-from tttproblem import TTTProblem
+from tttproblem import TTTProblem, TTTUI
+import adversarialsearch as MyImplementation
 
 import matplotlib.pyplot as plt 
+import argparse
 import numpy as np 
 
 
@@ -65,17 +67,56 @@ def main():
     """
     Provides an example of the TTTProblem class being used.
     """
-    s = StudentBot2()
-    r = RandomBot()
-    m = MinmaxBot()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--game", choices=["ttt", "custom"], default="ttt")
+    parser.add_argument("--dimension", type=int, default=None)
+    parser.add_argument(
+        "--player1", choices=["self", "minimax", "bot", "random"], default="bot"
+    )
+    parser.add_argument(
+        "--player2", choices=["self", "minimax", "bot", "random"], default="random"
+    )
+    parser.add_argument("--pattern", choices=["l", "line", "t", "v"], default="line")
+    parser.add_argument("--gameNum", type=int, default=500)
+    args = parser.parse_args()
+    player_args = [args.player1, args.player2]
 
-    games = 500
+
+    # Assign players:
+    players = [None, None]
+    algorithm_dict = {
+        "self": None,
+        "minimax": MyImplementation.minimax,
+        "bot": StudentBot(),
+        "random": RandomBot()
+    } 
+    for i, player in enumerate(player_args):
+        players[i] = algorithm_dict.get(player)
+
+    ### Game: Tic-Tac-Toe
+    if args.game == "ttt":
+        if args.dimension is not None:
+            if args.dimension < 3:
+                parser.error("--dimension must be at least 3 for Tic-Tac-Toe")
+            #TODO
+            #Pass custom arg in game instantiation 
+            game = TTTProblem(args.pattern, dim=args.dimension)
+        else:
+            game = TTTProblem()
+        game_ui = TTTUI(game)
+
+    ### Game: Custom
+    # if args.game == "custom":
+    #     game, game_ui = get_custom_asp(args)
+
+    games = args.gameNum
     for i in range(games):
-      t = TTTProblem()
-      run_game(t, [s, r])
+      run_game(game, players)
 
-    print("saving model")
-    r.model.save("500_line_vs_random")
+    for player in players:
+        if player is RandomBot:
+            print("saving model")
+            player.model.save("500_line_vs_random")
 
     #print(s.graph)
 
