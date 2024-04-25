@@ -17,8 +17,8 @@ class StudentBot:
     def __init__(self):
 
         self.model = Reinforce(3, 3, ACTIONS)
+        #Comment out when not including pretrained weights
         self.model.load_weights("1000_line_vs_random_weights")   
-        #print(self.model.summary())
         self.rewards = []
         self.states = []
         self.actions = []
