@@ -117,18 +117,9 @@ def main():
       t = TTTProblem()
       run_game(t, players)
 
+    #Include if saving weights after training
     #players[0].model.save_weights("1000_line_vs_random_weights")
     print("saved model")
-
-    
-
-    
-   # for player in players:
-   #     if player is StudentBot:
-   #         print("saving model")
-   #         player.model.save("1000_line_vs_random")
-
-    #print(s.graph)
 
 if __name__ == "__main__":
     main()
