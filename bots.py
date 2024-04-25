@@ -3,6 +3,7 @@ from tttproblem import TTTProblem
 from adversarialsearch import minimax
 import tensorflow as tf
 import numpy as np
+from tensorflow.keras.models import load_model
 
 
 
@@ -16,6 +17,8 @@ class StudentBot:
     def __init__(self):
 
         self.model = Reinforce(3, 3, ACTIONS)
+        self.model.load_weights("1000_line_vs_random_weights")   
+        #print(self.model.summary())
         self.rewards = []
         self.states = []
         self.actions = []
