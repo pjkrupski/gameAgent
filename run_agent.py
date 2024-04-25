@@ -1,6 +1,7 @@
 from adversarialsearchproblem import AdversarialSearchProblem
 from bots import StudentBot, StudentBot2, RandomBot, MinmaxBot
 from tttproblem import TTTProblem, TTTUI
+from tttproblem import TTTProblem, TTTUI
 from tensorflow.keras.models import load_model
 
 import matplotlib.pyplot as plt 
