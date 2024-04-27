@@ -18,7 +18,7 @@ class StudentBot:
 
         self.model = Reinforce(3, 3, ACTIONS)
         #Comment out when not including pretrained weights
-        self.model.load_weights("1000_line_vs_random_weights")   
+        #self.model.load_weights("1000_line_vs_random_weights")   
         self.rewards = []
         self.states = []
         self.actions = []
@@ -274,12 +274,15 @@ class StudentBot2:
 
         probs = np.array(probs)
 
+        if self.games%100 == 0:
+          print(probs)
+
         if probs.sum() == 0:
             probs += 0.1
 
         probs /= probs.sum()
 
-        output = np.random.choice(idx, 1, p=probs)[0]
+        output = idx[np.argmax(probs)]#np.random.choice(idx, 1, p=probs)[0]
     
         self.rewards.append(0)
         self.actions.append(output)
@@ -291,9 +294,12 @@ class StudentBot2:
 
         self.games += 1
 
-        if win:
+        if win > 0.5:
           self.rewards[-1] = 1
           self.wins += 1
+        else:
+          self.rewards[-1] = 0
+
         #  print("win")
         #else:
         #  print("lose")

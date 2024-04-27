@@ -55,12 +55,13 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
             game_ui.update_state(state)
             game_ui.render()
 
-        if asp.is_terminal_state(state): # and bots[0].games%100 == 0:
-            print(asp.board_to_pretty_string(state.board))
-
     tup = asp.evaluate_terminal(state)
+    if bots[0].games%100 == 0:
+      print(asp.board_to_pretty_string(state.board))
+      print(bots[0].actions)
+      print(tup)
 
-    bots[0].cleanup(tup[0] == 1.0)
+    bots[0].cleanup(tup[0])
 
     return asp.evaluate_terminal(asp.get_start_state())
 
@@ -72,10 +73,10 @@ def main():
     parser.add_argument("--game", choices=["ttt", "custom"], default="ttt")
     parser.add_argument("--dimension", type=int, default=None)
     parser.add_argument(
-        "--player1", choices=["self", "minimax", "bot", "random"], default="bot"
+        "--player1", choices=["self", "minimax", "bot", "bot2", "random"], default="bot"
     )
     parser.add_argument(
-        "--player2", choices=["self", "minimax", "bot", "random"], default="minimax"
+        "--player2", choices=["self", "minimax", "bot", "bot2", "random"], default="minimax"
     )
     parser.add_argument("--pattern", choices=["l", "line", "t", "v"], default="line")
     parser.add_argument("--gameNum", type=int, default=1000)
@@ -89,6 +90,7 @@ def main():
         "self": None,
         "minimax": MinmaxBot(),
         "bot": StudentBot(),
+        "bot2": StudentBot2(),
         "random": RandomBot()
     } 
     for i, player in enumerate(player_args):
