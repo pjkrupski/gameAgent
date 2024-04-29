@@ -54,7 +54,7 @@ Action = Tuple[int, int]
 
 
 class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
-    def __init__(self, pattern="line", dim=3, board=None, player_to_move=0):
+    def __init__(self, pattern="line", dim=3, winlength = 3, board=None, player_to_move=0):
         """
         Inputs:
                 dim- the number of cells in one row or column.
@@ -65,6 +65,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
                 of the game
         """
         self._dim = dim
+        self._winlength = winlength
         if board == None:
             board = np.full(shape=(dim,dim), fill_value=SPACE)
         self._start_state = TTTState(board, player_to_move)
@@ -131,7 +132,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         #         elif board[row][col] == O:
         #             if self.search_win(self, O, board, row, col):
         #                 return [0.0, 1.0]
-        x = self.search_win(self, board)
+        x = self.search_win(self, board, winlength=self._winlength)
         if x == X:
             return [1.0, 0.0]
         elif x == O:
