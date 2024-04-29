@@ -13,20 +13,20 @@ kernel = np.array(((1, 1, 1), (0, 1, 0), (0, 1, 0)))
 T_Pattern = [[kernel], [np.sum(kernel)]]
 
 
-def search_L(self, board):
+def search_L(self, board, winlength):
     #Searches for a len 5 L pattern of c's 
     return search_By_Pattern(self, board, *L_Pattern)
 
 #TODO
-def search_V(self, board):
+def search_V(self, board, winlength):
     return search_By_Pattern(self, board, *V_Pattern)
 
 #TODO
-def search_Star(self, board):
+def search_Star(self, board, winlength):
     pass
 
 #TODO
-def search_T(self, board):
+def search_T(self, board, winlength):
 #Searches for a len 5 L pattern of c's 
     kernel = np.array(((1, 1, 1), (0, 1, 0), (0, 0, 1)))
     return search_By_Pattern(self, board, *T_Pattern)
@@ -43,30 +43,32 @@ def search_By_Pattern(self, board, kernels, sizes):
             kernel = rotate(kernel, 90)
     return 0
 
-
-def search_Line(self, board):
-   
-    diagonal1 = [board[i][i] for i in range(self._dim)]
-    if _all_same(diagonal1, -1) or _all_same(diagonal1, 1): 
-        return diagonal1[0]
-
-    diagonal2 = [board[i][self._dim - 1 - i] for i in range(self._dim)]
-    if _all_same(diagonal2, -1) or _all_same(diagonal2, 1):
-        return diagonal2[0]
-
+def search_Line(self, board, winlength):
+    # Check rows
     for row in board:
-        if _all_same(row, -1) or _all_same(row, 1):
+        if self.helper(row, winlength, -1) or self.helper(row, winlength, 1):
             return row[0]
 
+    # Check columns
     for c in range(self._dim):
         col = [board[r][c] for r in range(self._dim)]
-        if _all_same(col, -1) or _all_same(col, 1):
+        if self.helper(col, winlength, -1) or self.helper(col, winlength, 1):
             return col[0]
 
+    # Check diagonals
+    for k in range(self._dim - winlength + 1):
+        if k == 0:
+            diag = np.diag(board)
+        else:
+            diag = np.diag(board, k)
+        if self.helper(diag, winlength, -1) or self.helper(diag, winlength, 1):
+            return diag[0]
+
+        diag = np.diag(board,-k)
+        if self.helper(diag, winlength, -1) or self.helper(diag, winlength, 1):
+            return diag[0]
+
     return 0
-
-    
-
 
 def _all_same(cell_list, c):
     """
@@ -78,4 +80,15 @@ def _all_same(cell_list, c):
     if all(lst):
         return True
 
+    return False
+
+def helper(dim, winlength, char):
+    count = 0
+    for i in dim:
+        if count == winlength:
+            return True
+        if dim[i] == char:
+            count += 1
+        else:
+            count = 0
     return False

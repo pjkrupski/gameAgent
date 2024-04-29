@@ -86,6 +86,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--game", choices=["ttt", "connect4", "custom"], default="ttt")
     parser.add_argument("--dimension", type=int, default=None)
+    parser.add_argument("--winlength", type=int, default=3)
     parser.add_argument(
         "--player1", choices=["self", "minimax", "ab", "ab-cutoff"], default="self"
     )
