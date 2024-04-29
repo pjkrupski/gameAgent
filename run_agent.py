@@ -71,7 +71,8 @@ def main():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("--game", choices=["ttt", "custom"], default="ttt")
-    parser.add_argument("--dimension", type=int, default=None)
+    parser.add_argument("--dimension", type=int, default=16)
+    parser.add_argument("--winlength", type=int, default=3)
     parser.add_argument(
         "--player1", choices=["self", "minimax", "bot", "bot2", "random"], default="bot"
     )
@@ -105,7 +106,7 @@ def main():
             #Pass custom arg in game instantiation 
             game = TTTProblem(args.pattern, dim=args.dimension)
         else:
-            game = TTTProblem()
+            game = TTTProblem(dim=args.dimension)
         game_ui = TTTUI(game)
 
     ### Game: Custom
@@ -116,7 +117,8 @@ def main():
   
     games = args.gameNum
     for i in range(games):
-      t = TTTProblem()
+      t = TTTProblem(args.dimension)
+      print("initialized to", args.dimension)
       run_game(t, players)
 
     #Include if saving weights after training
