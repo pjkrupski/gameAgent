@@ -56,10 +56,10 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
             game_ui.render()
 
     tup = asp.evaluate_terminal(state)
-    if bots[0].games%100 == 0:
-      print(asp.board_to_pretty_string(state.board))
-      print(bots[0].actions)
-      print(tup)
+    #if bots[0].games%100 == 0:
+    print(asp.board_to_pretty_string(state.board))
+    #print(bots[0].actions)
+    #print(tup)
 
     bots[0].cleanup(tup[0])
 
@@ -74,10 +74,10 @@ def main():
     parser.add_argument("--dimension", type=int, default=16)
     parser.add_argument("--winlength", type=int, default=3)
     parser.add_argument(
-        "--player1", choices=["self", "minimax", "bot", "bot2", "random"], default="bot"
+        "--player1", choices=["self", "minimax", "bot", "bot2", "random"], default="random"
     )
     parser.add_argument(
-        "--player2", choices=["self", "minimax", "bot", "bot2", "random"], default="minimax"
+        "--player2", choices=["self", "minimax", "bot", "bot2", "random"], default="random"
     )
     parser.add_argument("--pattern", choices=["l", "line", "t", "v"], default="line")
     parser.add_argument("--gameNum", type=int, default=1000)
@@ -104,9 +104,9 @@ def main():
                 parser.error("--dimension must be at least 3 for Tic-Tac-Toe")
             #TODO
             #Pass custom arg in game instantiation 
-            game = TTTProblem(args.pattern, dim=args.dimension)
+            game = TTTProblem(args.dimension)
         else:
-            game = TTTProblem(dim=args.dimension)
+            game = TTTProblem(args.dimension)
         game_ui = TTTUI(game)
 
     ### Game: Custom
@@ -116,9 +116,9 @@ def main():
     #random_trained = load_model("1000_line_vs_random")
   
     games = args.gameNum
-    for i in range(games):
+    for i in range(5):
       t = TTTProblem(args.dimension)
-      print("initialized to", args.dimension)
+      #print("initialized to", args.dimension)
       run_game(t, players)
 
     #Include if saving weights after training

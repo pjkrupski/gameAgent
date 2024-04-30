@@ -45,29 +45,74 @@ def search_By_Pattern(self, board, kernels, sizes):
 
 def search_Line(self, board, winlength):
     # Check rows
+    
     for row in board:
-        if self.helper(row, winlength, -1) or self.helper(row, winlength, 1):
-            return row[0]
+
+        eval_x = self.find_n_inarow(row, winlength, 1)
+
+        if eval_x[0]: 
+          print(eval_x[1], " won in row ")
+          return eval_o[1]
+
+        eval_o = self.find_n_inarow(row, winlength, -1)
+        
+        if eval_o[0]: 
+          print(eval_o[1], " won in row ")
+          return eval_o[1]
 
     # Check columns
     for c in range(self._dim):
         col = [board[r][c] for r in range(self._dim)]
-        if self.helper(col, winlength, -1) or self.helper(col, winlength, 1):
-            return col[0]
+
+        eval_x = self.find_n_inarow(col, winlength, 1)
+
+        if eval_x[0]: 
+          print(eval_x[1], " won in col ")
+          return eval_o[1]
+
+        eval_o = self.find_n_inarow(col, winlength, -1)
+        
+        if eval_o[0]: 
+          print(eval_o[1], " won in col ")
+          return eval_o[1]
+
+
+
+
 
     # Check diagonals
     for k in range(self._dim - winlength + 1):
-        if k == 0:
-            diag = np.diag(board)
-        else:
-            diag = np.diag(board, k)
-        if self.helper(diag, winlength, -1) or self.helper(diag, winlength, 1):
-            return diag[0]
 
-        diag = np.diag(board,-k)
-        if self.helper(diag, winlength, -1) or self.helper(diag, winlength, 1):
-            return diag[0]
+        if k == 0:   #left to right diag
+            diag1 = np.diag(board)
+        else:  #left to right diag
+            diag1 = np.diag(board, k)
 
+
+        eval_x = self.find_n_inarow(diag1, winlength, 1)
+        if eval_x[0]:
+          print(eval_x[1], " won in diag 1 ")
+          return eval_o[1]
+
+
+        eval_o = self.find_n_inarow(diag1, winlength, -1)
+        if eval_o[0]:
+          print(eval_o[1], " won in diag 1 ")
+          return eval_o[1]
+
+        diag2 = np.diag(board,-k) #right to left drag
+
+        eval_x = self.find_n_inarow(diag2, winlength, 1)
+        if eval_x[0]:
+          print(eval_x[1], " won in diag 2 ")
+          return eval_x[1]
+
+        eval_o = self.find_n_inarow(diag2, winlength, -1)
+        if eval_o[0]:
+          print(eval_o[1], " won in diag 2 ")
+          return eval_o[1]
+    
+   # print(" returning 0 from search line ", flush=True)
     return 0
 
 def _all_same(cell_list, c):
@@ -82,13 +127,36 @@ def _all_same(cell_list, c):
 
     return False
 
-def helper(dim, winlength, char):
+def find_n_inarow(dim, winlength, char):
+    #print(char, " is char")
     count = 0
-    for i in dim:
+    for i in range(0, len(dim)):
         if count == winlength:
-            return True
+            return (True, char)
         if dim[i] == char:
+            #print("dim at ", i, " is = to ", dim[i], " and char is ", char, " count becomes ", count+1)
             count += 1
         else:
             count = 0
-    return False
+    return (False, char)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
