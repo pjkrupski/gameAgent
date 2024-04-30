@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 
 
 
-ACTIONS = 9
+ACTIONS = 9 #i*j
 
 model2 = ValueNN(3, 3, ACTIONS)
 
@@ -161,17 +161,17 @@ class RandomBot:
         """
 
         choices = []
-
-        for i in range(3):
-           for j in range(3):
+        board_len = asp._dim
+        for i in range(board_len):
+           for j in range(board_len):
               choices.append((i,j))
 
         idx = []
 
         safe = asp.get_available_actions(asp.get_start_state())
 
-        for i in range(3):
-            for j in range(3):
+        for i in range(board_len):
+            for j in range(board_len):
                 choices.append((i,j))
 
                 if (i,j) in safe:
@@ -184,7 +184,7 @@ class RandomBot:
         #print(type(choices[output]), choices[output], "is choices ", flush=True)
         return choices[output]
 
-    def cleanup(self):
+    def cleanup(self, win):
 
         pass
 

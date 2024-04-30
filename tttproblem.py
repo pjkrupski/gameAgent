@@ -17,7 +17,7 @@
 
 from typing import Tuple
 from adversarialsearchproblem import AdversarialSearchProblem, GameState, GameUI
-from searches import search_L, search_Line, search_V, search_Star, search_T
+from searches import search_L, search_Line, find_n_inarow, search_V, search_Star, search_T
 import time
 import numpy as np 
 
@@ -54,7 +54,7 @@ Action = Tuple[int, int]
 
 
 class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
-    def __init__(self, pattern="line", dim=3, board=None, player_to_move=0):
+    def __init__(self, dim, pattern="line", winlength=3, board=None, player_to_move=0):
         """
         Inputs:
                 dim- the number of cells in one row or column.
@@ -65,12 +65,14 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
                 of the game
         """
         self._dim = dim
+        self._winlength = winlength
         if board == None:
             board = np.full(shape=(dim,dim), fill_value=SPACE)
         self._start_state = TTTState(board, player_to_move)
         self.pattern = pattern
         searches = {'l': search_L, 'line': search_Line, 'v': search_V, 'star': search_Star, 't': search_T}
         self.search_win = searches[pattern]
+        self.find_n_inarow = find_n_inarow
 
     def heuristic_func(self, state: TTTState, player_index: int) -> float:
         """
@@ -131,7 +133,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         #         elif board[row][col] == O:
         #             if self.search_win(self, O, board, row, col):
         #                 return [0.0, 1.0]
-        x = self.search_win(self, board)
+        x = self.search_win(self, board, winlength=self._winlength)
         if x == X:
             return [1.0, 0.0]
         elif x == O:
