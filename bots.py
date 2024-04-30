@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 
 
 
-ACTIONS = 9
+ACTIONS = 9 #i*j
 
 model2 = ValueNN(3, 3, ACTIONS)
 

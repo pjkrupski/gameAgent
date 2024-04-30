@@ -116,7 +116,7 @@ def main():
     #random_trained = load_model("1000_line_vs_random")
   
     games = args.gameNum
-    for i in range(5):
+    for i in range(15):
       t = TTTProblem(args.dimension)
       #print("initialized to", args.dimension)
       run_game(t, players)
