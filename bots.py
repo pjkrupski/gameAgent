@@ -1,6 +1,6 @@
 from reinforce import Reinforce, ValueNN
 from tttproblem import TTTProblem
-from adversarialsearch import minimax
+from adversarialsearch import minimax, alpha_beta, alpha_beta_cutoff
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -14,7 +14,7 @@ model2 = ValueNN(3, 3, ACTIONS)
 class StudentBot:
     
 
-    def __init__(self):
+    def __init__(self, training=True):
 
         self.model = Reinforce(3, 3, ACTIONS)
         #Comment out when not including pretrained weights
@@ -27,6 +27,7 @@ class StudentBot:
 
         self.games = 0
         self.wins = 0
+        self.training=training
 
     def discount(self, rewards, discount_factor=.95):
         """
@@ -104,14 +105,18 @@ class StudentBot:
         probs /= probs.sum()
 
         output = np.random.choice(idx, 1, p=probs)[0]
-    
-        self.rewards.append(0)
-        self.actions.append(output)
-        self.states.append(state)
+
+        if self.training:
+            self.rewards.append(0)
+            self.actions.append(output)
+            self.states.append(state)
 
         return choices[output]
 
     def cleanup(self, win):
+
+        if not self.training:
+            return
 
         self.games += 1
 
@@ -144,13 +149,11 @@ class StudentBot:
         self.states = []
         self.actions = []
 
-        pass
-
 
 class RandomBot:
 
     def __init__(self):
-      pass
+      self.games = 0
 
     def decide(self, asp: TTTProblem):
         """
@@ -185,19 +188,20 @@ class RandomBot:
         return choices[output]
 
     def cleanup(self, win):
-
+        self.games += 1
         pass
 
 
 class StudentBot2:
     
 
-    def __init__(self):
+    def __init__(self, training=True):
 
 
         self.rewards = []
         self.states = []
         self.actions = []
+        self.training = training
 
         self.graph = []
 
@@ -283,14 +287,18 @@ class StudentBot2:
         probs /= probs.sum()
 
         output = idx[np.argmax(probs)]#np.random.choice(idx, 1, p=probs)[0]
-    
-        self.rewards.append(0)
-        self.actions.append(output)
-        self.states.append(state)
+
+        if self.training:
+            self.rewards.append(0)
+            self.actions.append(output)
+            self.states.append(state)
 
         return choices[output]
 
     def cleanup(self, win):
+
+        if not self.training:
+            return
 
         self.games += 1
 
@@ -326,13 +334,11 @@ class StudentBot2:
         self.states = []
         self.actions = []
 
-        pass
-
 
 class MinmaxBot:
 
     def __init__(self):
-      pass
+      self.games = 0
 
     def decide(self, asp: TTTProblem):
         
@@ -340,9 +346,38 @@ class MinmaxBot:
 
         return output
 
-    def cleanup(self):
+    def cleanup(self, win):
+        self.games += 1
 
-        pass
+class ABMinmaxBot:
+
+    def __init__(self):
+      self.games = 0
+
+    def decide(self, asp: TTTProblem):
+        
+        output = alpha_beta(asp)
+
+        return output
+
+    def cleanup(self, win):
+        self.games += 1
+
+class ABCutoffBot:
+
+    def __init__(self, cutoff_ply, heuristic_func):
+      self.cutoff_ply = cutoff_ply
+      self.heuristic_func = heuristic_func
+      self.games = 0
+
+    def decide(self, asp: TTTProblem):
+        
+        output = alpha_beta_cutoff(asp, self.cutoff_ply, self.heuristic_func)
+
+        return output
+
+    def cleanup(self, win):
+        self.games += 1
 
 
 

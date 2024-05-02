@@ -17,9 +17,11 @@
 
 from typing import Tuple
 from adversarialsearchproblem import AdversarialSearchProblem, GameState, GameUI
-from searches import search_L, search_Line, find_n_inarow, search_V, search_Star, search_T
+from searches import search_L, search_Line, search_V, search_Star, search_T
 import time
 import numpy as np 
+import heuristicsearch as heuristic
+from math import tanh
 
 
 SPACE = 0
@@ -72,7 +74,8 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         self.pattern = pattern
         searches = {'l': search_L, 'line': search_Line, 'v': search_V, 'star': search_Star, 't': search_T}
         self.search_win = searches[pattern]
-        self.find_n_inarow = find_n_inarow
+        searches = {'l': heuristic.search_L, 'line': heuristic.search_Line, 'v': heuristic.search_V, 'star': heuristic.search_Star, 't': heuristic.search_T}
+        self.search_heuristic = searches[pattern]
 
     def heuristic_func(self, state: TTTState, player_index: int) -> float:
         """
@@ -80,7 +83,13 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         function works with boards of any size; if it only works for 3x3 boards, you won't be
         able to properly test ab-cutoff for larger board sizes!
         """
-        return 0
+        dict = {0:X, 1:O}
+        possibilities = self.search_heuristic(state.board, self._winlength)
+        x = possibilities[dict[player_index]] - possibilities[dict[player_index]]
+        x = tanh(x/50)/4 + .75
+        # if x <= .5 or x >= 1:
+        #     print(x)
+        return x
 
     def get_available_actions(self, state):
         actions = set()
@@ -133,7 +142,7 @@ class TTTProblem(AdversarialSearchProblem[TTTState, Action]):
         #         elif board[row][col] == O:
         #             if self.search_win(self, O, board, row, col):
         #                 return [0.0, 1.0]
-        x = self.search_win(self, board, winlength=self._winlength)
+        x = self.search_win(board, winlength=self._winlength)
         if x == X:
             return [1.0, 0.0]
         elif x == O:
