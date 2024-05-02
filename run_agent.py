@@ -1,8 +1,9 @@
 from adversarialsearchproblem import AdversarialSearchProblem
-from bots import StudentBot, StudentBot2, RandomBot, MinmaxBot
+from bots import StudentBot, StudentBot2, RandomBot, MinmaxBot, ABMinmaxBot, ABCutoffBot
 from tttproblem import TTTProblem, TTTUI
 from tttproblem import TTTProblem, TTTUI
 from tensorflow.keras.models import load_model
+import copy
 
 import matplotlib.pyplot as plt 
 import argparse
@@ -50,16 +51,17 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
         result_state = asp.transition(state, decision)
         asp.set_start_state(result_state)
         state = result_state
-
+        # print(asp.board_to_pretty_string(state.board))
+        # print(asp.internal_evaluate_terminal(state))
+        
         if game_ui:
             game_ui.update_state(state)
             game_ui.render()
 
     tup = asp.evaluate_terminal(state)
-    #if bots[0].games%100 == 0:
-    print(asp.board_to_pretty_string(state.board))
+    if bots[0].games%100 == 0:
+        print(asp.board_to_pretty_string(state.board))
     #print(bots[0].actions)
-    #print(tup)
 
     bots[0].cleanup(tup[0])
 
@@ -71,43 +73,48 @@ def main():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("--game", choices=["ttt", "custom"], default="ttt")
-    parser.add_argument("--dimension", type=int, default=16)
+    parser.add_argument("--dimension", type=int, default=3)
     parser.add_argument("--winlength", type=int, default=3)
     parser.add_argument(
-        "--player1", choices=["self", "minimax", "bot", "bot2", "random"], default="random"
+        "--player1", choices=["self", "minimax", "bot", "bot2", "random", "ab", "ab-cutoff"], default="bot2"
     )
     parser.add_argument(
-        "--player2", choices=["self", "minimax", "bot", "bot2", "random"], default="random"
+        "--player2", choices=["self", "minimax", "bot", "bot2", "random", "ab", "ab-cutoff"], default="random"
     )
     parser.add_argument("--pattern", choices=["l", "line", "t", "v"], default="line")
-    parser.add_argument("--gameNum", type=int, default=1000)
+    parser.add_argument("--gameNum", type=int, default=100)
+    parser.add_argument("--cutoff", type=int, default=None)
     args = parser.parse_args()
     player_args = [args.player1, args.player2]
+    if "ab-cutoff" in player_args and args.cutoff is None:
+        parser.error(
+            "Cannot run ab-cutoff without a cutoff set! Use the argument --cutoff=<your cutoff>."
+        )
 
+    ### Game: Tic-Tac-Toe
+    if args.game == "ttt":
+        if args.dimension < 3:
+            parser.error("--dimension must be at least 3 for Tic-Tac-Toe")
+        #TODO
+        #Pass custom arg in game instantiation 
+        game = TTTProblem(args.dimension, args.pattern, args.winlength)
+        game_ui = TTTUI(game)
 
-    # Assign players:
+        # Assign players:
     players = [None, None]
     algorithm_dict = {
         "self": None,
         "minimax": MinmaxBot(),
         "bot": StudentBot(),
         "bot2": StudentBot2(),
-        "random": RandomBot()
+        "random": RandomBot(),
+        "ab": ABMinmaxBot(),
     } 
     for i, player in enumerate(player_args):
-        players[i] = algorithm_dict.get(player)
-
-    ### Game: Tic-Tac-Toe
-    if args.game == "ttt":
-        if args.dimension is not None:
-            if args.dimension < 3:
-                parser.error("--dimension must be at least 3 for Tic-Tac-Toe")
-            #TODO
-            #Pass custom arg in game instantiation 
-            game = TTTProblem(args.dimension)
-        else:
-            game = TTTProblem(args.dimension)
-        game_ui = TTTUI(game)
+        players[i] = algorithm_dict.get(
+            player,
+            ABCutoffBot(args.cutoff, lambda s, i=i: game.heuristic_func(s, i))
+        )
 
     ### Game: Custom
     # if args.game == "custom":
@@ -115,11 +122,10 @@ def main():
 
     #random_trained = load_model("1000_line_vs_random")
   
-    games = args.gameNum
-    for i in range(15):
-      t = TTTProblem(args.dimension)
-      #print("initialized to", args.dimension)
-      run_game(t, players)
+    for i in range(args.gameNum):
+      print(f"Game: {i}")
+      tempGame = copy.deepcopy(game)
+      run_game(tempGame, players)
 
     #Include if saving weights after training
     #players[0].model.save_weights("1000_line_vs_random_weights")
