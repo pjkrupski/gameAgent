@@ -61,9 +61,10 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
     tup = asp.evaluate_terminal(state)
     if bots[0].games%100 == 0:
         print(asp.board_to_pretty_string(state.board))
-    #print(bots[0].actions)
+        print(bots[1].actions)
 
     bots[0].cleanup(tup[0])
+    bots[1].cleanup(tup[1])
 
     return asp.evaluate_terminal(asp.get_start_state())
 
@@ -82,7 +83,7 @@ def main():
         "--player2", choices=["self", "minimax", "bot", "bot2", "random", "ab", "ab-cutoff"], default="random"
     )
     parser.add_argument("--pattern", choices=["l", "line", "t", "v"], default="line")
-    parser.add_argument("--gameNum", type=int, default=100)
+    parser.add_argument("--gameNum", type=int, default=1000)
     parser.add_argument("--cutoff", type=int, default=None)
     args = parser.parse_args()
     player_args = [args.player1, args.player2]
@@ -123,7 +124,7 @@ def main():
     #random_trained = load_model("1000_line_vs_random")
   
     for i in range(args.gameNum):
-      print(f"Game: {i}")
+      #print(f"Game: {i}")
       tempGame = copy.deepcopy(game)
       run_game(tempGame, players)
 

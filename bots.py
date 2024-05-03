@@ -16,7 +16,7 @@ class StudentBot:
 
     def __init__(self, training=True):
 
-        self.model = Reinforce(3, 3, ACTIONS)
+        self.model = ValueNN(3, 3, ACTIONS)
         #Comment out when not including pretrained weights
         #self.model.load_weights("1000_line_vs_random_weights")   
         self.rewards = []
@@ -99,12 +99,15 @@ class StudentBot:
 
         probs = np.array(probs)
 
+        if self.games%100 == 0:
+          print(probs)
+
         if probs.sum() == 0:
             probs += 0.1
 
         probs /= probs.sum()
 
-        output = np.random.choice(idx, 1, p=probs)[0]
+        output = idx[np.argmax(probs)]#np.random.choice(idx, 1, p=probs)[0]
 
         if self.training:
             self.rewards.append(0)
@@ -139,8 +142,8 @@ class StudentBot:
             print("NO REWARDS!")
 
         if self.games%100 == 0:
-            print("Wins last 100: " + str(self.wins))
-            print("Games: " + str(self.games))
+            #print("Wins last 100: " + str(self.wins))
+            #print("Games: " + str(self.games))
 
             self.graph.append(self.wins)
             #self.wins = 0
