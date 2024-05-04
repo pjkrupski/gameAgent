@@ -18,7 +18,7 @@ class StudentBot:
 
         self.model = ValueNN(3, 3, ACTIONS)
         #Comment out when not including pretrained weights
-        #self.model.load_weights("1000_line_vs_random_weights")   
+        self.model.load_weights("5000_line_selfplay2")   
         self.rewards = []
         self.states = []
         self.actions = []
@@ -123,30 +123,33 @@ class StudentBot:
 
         self.games += 1
 
-        if win:
-          self.rewards[-1] = 1
+        if win > 0.5:
           self.wins += 1
+
+        self.rewards[-1] = win
         #  print("win")
         #else:
         #  print("lose")
 
         if len(self.rewards) > 0:
 
-            with tf.GradientTape() as tape:
+            '''with tf.GradientTape() as tape:
                 discounted_rewards = self.discount(self.rewards)
                 loss2 = self.model.loss(self.states, self.actions, discounted_rewards)
 
             gradients = tape.gradient(loss2, self.model.trainable_variables)
-            self.model.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
+            self.model.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))'''
+            
+            pass
         else:
             print("NO REWARDS!")
 
         if self.games%100 == 0:
-            #print("Wins last 100: " + str(self.wins))
-            #print("Games: " + str(self.games))
+            print("Wins last 100: " + str(self.wins))
+            print("Games: " + str(self.games))
 
             self.graph.append(self.wins)
-            #self.wins = 0
+            self.wins = 0
 
         self.rewards = []
         self.states = []
@@ -306,11 +309,9 @@ class StudentBot2:
         self.games += 1
 
         if win > 0.5:
-          self.rewards[-1] = 1
           self.wins += 1
-        else:
-          self.rewards[-1] = 0
-
+        
+        self.rewards[-1] = win
         #  print("win")
         #else:
         #  print("lose")
@@ -329,6 +330,7 @@ class StudentBot2:
         if self.games%100 == 0:
             print("Wins last 100: " + str(self.wins))
             print("Games: " + str(self.games))
+            print(self.rewards)
 
             self.graph.append(self.wins)
             self.wins = 0

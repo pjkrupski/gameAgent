@@ -1,0 +1,2 @@
+model_checkpoint_path: "5000_line_selfplay2"
+all_model_checkpoint_paths: "5000_line_selfplay2"

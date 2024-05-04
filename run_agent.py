@@ -34,6 +34,7 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
         game_ui.render()
 
     while not (asp.is_terminal_state(state)):
+
         curr_bot = bots[state.player_to_move()]
 
         # Obtain decision from the bot itself, or from GameUI if bot is None:
@@ -61,10 +62,11 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
     tup = asp.evaluate_terminal(state)
     if bots[0].games%100 == 0:
         print(asp.board_to_pretty_string(state.board))
-        print(bots[1].actions)
+        print(bots[0].actions)
 
+    #bots[0].rewards = []
     bots[0].cleanup(tup[0])
-    bots[1].cleanup(tup[1])
+    #bots[1].cleanup(tup[1])
 
     return asp.evaluate_terminal(asp.get_start_state())
 
@@ -129,8 +131,8 @@ def main():
       run_game(tempGame, players)
 
     #Include if saving weights after training
-    #players[0].model.save_weights("1000_line_vs_random_weights")
-    print("saved model")
+    #players[0].model.save_weights("5000_line_selfplay2")
+    #print("saved model")
 
 if __name__ == "__main__":
     main()
