@@ -66,7 +66,7 @@ def run_game(asp: AdversarialSearchProblem, bots, game_ui=None):
 
     #bots[0].rewards = []
     bots[0].cleanup(tup[0])
-    #bots[1].cleanup(tup[1])
+    bots[1].cleanup(tup[1])
 
     return asp.evaluate_terminal(asp.get_start_state())
 
@@ -131,7 +131,7 @@ def main():
       run_game(tempGame, players)
 
     #Include if saving weights after training
-    #players[0].model.save_weights("5000_line_selfplay2")
+    players[0].model.save_weights("10000_line_selfplay_gomuku")
     #print("saved model")
 
 if __name__ == "__main__":

@@ -22,9 +22,11 @@ class ValueNN(tf.keras.Model):
 
         self.optimizer = tf.optimizers.Adam(learning_rate=0.001)     #.00005
 
-        self.D1 = tf.keras.layers.Conv2D(filters=16, kernel_size=3, strides = (1,1), activation = 'relu', input_shape=[state_size,state_size2,2], padding="same")
-
-        self.D2 = tf.keras.layers.Dense(num_actions, kernel_initializer=tf.keras.initializers.RandomUniform(
+        self.D1 = tf.keras.layers.Conv2D(filters=256, kernel_size=5, strides = (1,1), activation = 'relu', input_shape=[state_size,state_size2,2], padding="same")
+        self.D2 = tf.keras.layers.Conv2D(filters=128, kernel_size=5, strides = (1,1), activation = 'relu', padding="same")
+        self.D3 = tf.keras.layers.Conv2D(filters=64, kernel_size=5, strides = (1,1), activation = 'relu', padding="same")
+        
+        self.D4 = tf.keras.layers.Dense(num_actions, kernel_initializer=tf.keras.initializers.RandomUniform(
         minval=-0.03, maxval=0.03))
 
         self.lossf = tf.keras.losses.MeanSquaredError()
@@ -42,9 +44,11 @@ class ValueNN(tf.keras.Model):
         """
         
         logits = self.D1(states)
+        logits = self.D2(logits)
+        logits = self.D3(logits)
         logits = tf.keras.layers.Flatten()(logits)
 
-        logits = self.D2(logits)
+        logits = self.D4(logits)
         probs = tf.nn.sigmoid(logits)
 
         return probs

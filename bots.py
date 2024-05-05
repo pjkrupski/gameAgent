@@ -6,19 +6,20 @@ import numpy as np
 from tensorflow.keras.models import load_model
 
 
+r = 9
 
-ACTIONS = 9 #i*j
+ACTIONS = r*r  #i*j
 
-model2 = ValueNN(3, 3, ACTIONS)
+model2 = ValueNN(r, r, ACTIONS)
 
 class StudentBot:
     
 
     def __init__(self, training=True):
 
-        self.model = ValueNN(3, 3, ACTIONS)
+        self.model = ValueNN(r, r, ACTIONS)
         #Comment out when not including pretrained weights
-        self.model.load_weights("5000_line_selfplay2")   
+        #self.model.load_weights("5000_line_selfplay2")   
         self.rewards = []
         self.states = []
         self.actions = []
@@ -28,6 +29,8 @@ class StudentBot:
         self.games = 0
         self.wins = 0
         self.training=training
+
+        self.last_state = 0 
 
     def discount(self, rewards, discount_factor=.95):
         """
@@ -82,6 +85,8 @@ class StudentBot:
                 elif board[row][col] == 'O':
                     state[row][col][1] = 1
 
+        self.last_state = np.sum(state)
+
         pred = self.model(tf.expand_dims(state, 0))[0]
         safe = asp.get_available_actions(cstate)
 
@@ -89,13 +94,13 @@ class StudentBot:
         choices = []
         idx = []
 
-        for i in range(3):
-            for j in range(3):
+        for i in range(r):
+            for j in range(r):
                 choices.append((i,j))
 
                 if (i,j) in safe:
-                    idx.append(i*3+j)
-                    probs.append(pred[i*3+j])
+                    idx.append(i*r+j)
+                    probs.append(pred[i*r+j])
 
         probs = np.array(probs)
 
@@ -126,7 +131,8 @@ class StudentBot:
         if win > 0.5:
           self.wins += 1
 
-        self.rewards[-1] = win
+        self.rewards[-1] = max(win, self.last_state/(r*r*2))
+
         #  print("win")
         #else:
         #  print("lose")
@@ -184,7 +190,7 @@ class RandomBot:
                 choices.append((i,j))
 
                 if (i,j) in safe:
-                    idx.append(i*3+j)
+                    idx.append(i*r+j)
                     
         #min_max_output = minimax(asp)
         #print(type(min_max_output), min_max_output, " is minmax return \n\n\n", flush=True)
@@ -213,6 +219,8 @@ class StudentBot2:
 
         self.games = 0
         self.wins = 0
+
+        self.last_state = 0 
 
     def discount(self, rewards, discount_factor=.95):
         """
@@ -267,6 +275,8 @@ class StudentBot2:
                 elif board[row][col] == 'O':
                     state[row][col][1] = 1
 
+        self.last_state = np.sum(state) 
+
         pred = model2(tf.expand_dims(state, 0))[0]
         safe = asp.get_available_actions(cstate)
 
@@ -274,13 +284,13 @@ class StudentBot2:
         choices = []
         idx = []
 
-        for i in range(3):
-            for j in range(3):
+        for i in range(r):
+            for j in range(r):
                 choices.append((i,j))
 
                 if (i,j) in safe:
-                    idx.append(i*3+j)
-                    probs.append(pred[i*3+j])
+                    idx.append(i*r+j)
+                    probs.append(pred[i*r+j])
 
         probs = np.array(probs)
 
@@ -311,7 +321,7 @@ class StudentBot2:
         if win > 0.5:
           self.wins += 1
         
-        self.rewards[-1] = win
+        self.rewards[-1] = max(win, self.last_state/(r*r*2))
         #  print("win")
         #else:
         #  print("lose")
